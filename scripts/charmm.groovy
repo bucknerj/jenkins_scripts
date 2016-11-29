@@ -11,13 +11,9 @@ def builds =
 // umich git builds
 builds.each {
   def current = it
-  job("git-${current.name}.build") {
+  job("build-git-${current.name}") {
     displayName("build git ${current.name}")
     description("install.com ${current.build} debug keepf nolog")
-    authorization {
-      permission('hudson.model.Item.Discover', 'anonymous')
-      permission('hudson.model.Item.Read', 'anonymous')
-    }
     multiscm {
       git {
         branch('master')
@@ -33,10 +29,7 @@ builds.each {
         branch('master')
         remote {
           name('origin')
-          url('/export/people/jenkins/scripts.git')
-        }
-        extensions {
-          relativeTargetDirectory('scripts')
+          url('/opt/git/jenkins.git')
         }
       }
     }
@@ -52,27 +45,20 @@ builds.each {
   } // end git build job
 
   if (current.test) {
-    job("git-${current.name}.test") {
+    job("test-git-${current.name}") {
       displayName("test git ${current.name}")
       description("run the testcases for the git ${current.name} build")
-      authorization {
-        permission('hudson.model.Item.Discover', 'anonymous')
-        permission('hudson.model.Item.Read', 'anonymous')
-      }
       multiscm {
         git {
           branch('master')
           remote {
             name('origin')
-            url('/export/people/jenkins/scripts.git')
-          }
-          extensions {
-            relativeTargetDirectory('scripts')
+            url('/opt/git/jenkins.git')
           }
         }
       }
       triggers {
-        upstream("git-${current.name}.build")
+        upstream("build-git-${current.name}")
       }
       steps {
         shell("/bin/bash scripts/test.bash ${current.test}")
@@ -95,7 +81,9 @@ builds.each {
           recipientList('bucknerj@umich.edu')
           defaultSubject("test git ${current.name}")
           preSendScript('''
-              msg.setContent(new File("${workspace}/current/email.html").text, "text/html")
+              msg.setContent(
+                new File("${workspace}/current/email.html").text,
+                "text/html")
           ''')
           triggers {
             always {
@@ -119,17 +107,13 @@ builds.each {
 // hanyang svn builds
 builds.each {
   def current = it
-  job("svn-${current.name}.build") {
+  job("build-svn-${current.name}") {
     displayName("build svn ${current.name}")
     description("install.com ${current.build} debug keepf nolog")
-    authorization {
-      permission('hudson.model.Item.Discover', 'anonymous')
-      permission('hudson.model.Item.Read', 'anonymous')
-    }
     multiscm {
       svn {
         location('svn://charmm.hanyang.ac.kr/charmm/trunk') {
-          credentials('d0fd9e9e-854b-48d3-80a6-2f7df21e4c5f') 
+          credentials('svn')
           directory('charmm')
         }
       }
@@ -137,10 +121,7 @@ builds.each {
         branch('master')
         remote {
           name('origin')
-          url('/export/people/jenkins/scripts.git')
-        }
-        extensions {
-          relativeTargetDirectory('scripts')
+          url('/opt/git/jenkins.git')
         }
       }
     }
@@ -156,27 +137,20 @@ builds.each {
   } // end svn build
 
   if (current.test) {
-    job("svn-${current.name}.test") {
+    job("test-svn-${current.name}") {
       displayName("test svn ${current.name}")
       description("run the testcases for the svn ${current.name} build")
-      authorization {
-        permission('hudson.model.Item.Discover', 'anonymous')
-        permission('hudson.model.Item.Read', 'anonymous')
-      }
       multiscm {
         git {
           branch('master')
           remote {
             name('origin')
-            url('/export/people/jenkins/scripts.git')
-          }
-          extensions {
-            relativeTargetDirectory('scripts')
+            url('/opt/git/jenkins.git')
           }
         }
       }
       triggers {
-        upstream("svn-${current.name}.build")
+        upstream("build-svn-${current.name}")
       }
       steps {
         shell("/bin/bash scripts/test.bash ${current.test}")
@@ -199,7 +173,9 @@ builds.each {
           recipientList('bucknerj@umich.edu')
           defaultSubject("test svn ${current.name}")
           preSendScript('''
-              msg.setContent(new File("${workspace}/current/email.html").text, "text/html")
+              msg.setContent(
+                new File("${workspace}/current/email.html").text,
+                "text/html")
           ''')
           triggers {
             always {
@@ -247,13 +223,9 @@ def cmakeBuilds =
 cmakeBuilds.each {
   def current = it
 // umich CMake build and test
-job("git-cmake-${current.name}.build") {
+job("build-git-cmake-${current.name}") {
   displayName("build git cmake ${current.name}")
   description("${current.description}\nconfigure ${current.build}")
-  authorization {
-    permission('hudson.model.Item.Discover', 'anonymous')
-    permission('hudson.model.Item.Read', 'anonymous')
-  }
   multiscm {
     git {
       branch('master')
@@ -269,10 +241,7 @@ job("git-cmake-${current.name}.build") {
       branch('master')
       remote {
         name('origin')
-        url('/export/people/jenkins/scripts.git')
-      }
-      extensions {
-        relativeTargetDirectory('scripts')
+        url('/opt/git/jenkins.git')
       }
     }
   }
@@ -288,27 +257,20 @@ job("git-cmake-${current.name}.build") {
 } // end git CMake build job
 
 // begin git CMake test job
-job("git-cmake-${current.name}.test") {
+job("test-git-cmake-${current.name}") {
   displayName("test git cmake ${current.name}")
   description("run the testcases for cmake\n${current.description}\nconfigure ${current.build}\ntest ${current.test}")
-  authorization {
-    permission('hudson.model.Item.Discover', 'anonymous')
-    permission('hudson.model.Item.Read', 'anonymous')
-  }
   multiscm {
     git {
       branch('master')
       remote {
         name('origin')
-        url('/export/people/jenkins/scripts.git')
-      }
-      extensions {
-        relativeTargetDirectory('scripts')
+        url('/opt/git/jenkins.git')
       }
     }
   }
   triggers {
-    upstream("git-cmake-${current.name}.build")
+    upstream("build-git-cmake-${current.name}")
   }
   steps {
     shell("/bin/bash scripts/test.bash ${current.test}")
@@ -331,7 +293,9 @@ job("git-cmake-${current.name}.test") {
       recipientList('bucknerj@umich.edu')
       defaultSubject("test git cmake ${current.name}")
       preSendScript('''
-          msg.setContent(new File("${workspace}/current/email.html").text, "text/html")
+          msg.setContent(
+            new File("${workspace}/current/email.html").text,
+            "text/html")
       ''')
       triggers {
         always {
