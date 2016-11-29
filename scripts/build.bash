@@ -9,7 +9,7 @@ if [[ -d inst ]]; then
 fi
 charmm/tool/NewCharmmTree inst
 
-export MAKE_COMMAND='make -j1 '
+export MAKE_COMMAND='make -j4 '
 pushd inst
 ./install.com $charmm_build_vars keepf nolog
 popd

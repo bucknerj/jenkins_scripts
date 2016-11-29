@@ -16,5 +16,5 @@ mkdir bld
 
 pushd bld
 ../charmm/configure -p ../inst $charmm_build_vars
-make -j1 install
+make -j4 install
 popd
