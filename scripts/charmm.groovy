@@ -20,6 +20,7 @@ builds.each {
         remote {
           name('origin')
           url('brooks:/export/git/charmm.git')
+          credentials('git')
         }
         extensions {
           relativeTargetDirectory('charmm')
@@ -232,6 +233,7 @@ job("build-git-cmake-${current.name}") {
       remote {
         name('origin')
         url('brooks:/export/git/charmm.git')
+        credentials('git')
       }
       extensions {
         relativeTargetDirectory('charmm')
