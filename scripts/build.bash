@@ -2,7 +2,7 @@
 
 charmm_build_vars=$*
 
-. scripts/load_modules.bash $1
+. config/scripts/load_modules.bash $1
 
 if [[ -d inst ]]; then
 	rm -rf inst;

@@ -32,6 +32,9 @@ builds.each {
           name('origin')
           url('/opt/git/jenkins.git')
         }
+        extensions {
+          relativeTargetDirectory('config')
+        }
       }
     }
     triggers {
@@ -55,6 +58,9 @@ builds.each {
           remote {
             name('origin')
             url('/opt/git/jenkins.git')
+          }
+          extensions {
+            relativeTargetDirectory('config')
           }
         }
       }
@@ -124,6 +130,9 @@ builds.each {
           name('origin')
           url('/opt/git/jenkins.git')
         }
+        extensions {
+          relativeTargetDirectory('config')
+        }
       }
     }
     triggers {
@@ -147,6 +156,9 @@ builds.each {
           remote {
             name('origin')
             url('/opt/git/jenkins.git')
+          }
+          extensions {
+            relativeTargetDirectory('config')
           }
         }
       }
@@ -245,6 +257,9 @@ job("build-git-cmake-${current.name}") {
         name('origin')
         url('/opt/git/jenkins.git')
       }
+      extensions {
+        relativeTargetDirectory('config')
+      }
     }
   }
   triggers {
@@ -268,6 +283,9 @@ job("test-git-cmake-${current.name}") {
       remote {
         name('origin')
         url('/opt/git/jenkins.git')
+      }
+      extensions {
+        relativeTargetDirectory('config')
       }
     }
   }

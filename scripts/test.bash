@@ -1,7 +1,7 @@
 #!/bin/bash
 
 charmm_test_vars=$*
-. scripts/load_modules.bash $5
+. config/scripts/load_modules.bash $5
 
 jenkins_jobs_dir=$(dirname $(dirname "$WORKSPACE"))
 this_job_name=$(basename $(dirname "$WORKSPACE"))
@@ -34,6 +34,10 @@ rm -f inst/test/output.xml
 rm -f inst/test/output.rpt
 rm -f inst/test/output/*.out
 
+if [ ! -f output.xfail ]; then
+    touch output.xfail
+fi
+
 pushd inst/test
 ln -sf "$WORKSPACE/output.xfail" output.xfail
 
@@ -43,13 +47,14 @@ else
     ln -sf "$WORKSPACE/benchmark" bench
 fi
 
-sed -e "s/@DIR@/$WORKSPACE/" "$WORKSPACE/data/sccdftb.dat" > sccdftb.dat
+sed -e "s%@DIR@%$WORKSPACE/config%" \
+    "$WORKSPACE/config/data/sccdftb.dat" > sccdftb.dat
 
 ./test.com $charmm_test_vars output bench || true
 ./test.com $charmm_test_vars output bench quantum || true
 popd
 
-perl scripts/rpt2xml.pl inst/test > inst/test/output.xml
+perl config/scripts/rpt2xml.pl inst/test > inst/test/output.xml
 
 mkdir -p current/output
 cp inst/test/output.* current

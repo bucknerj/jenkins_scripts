@@ -2,7 +2,7 @@
 
 charmm_build_vars=$*
 
-. scripts/load_modules.bash
+. config/scripts/load_modules.bash
 
 if [[ -d bld ]]; then
 	rm -rf bld;
