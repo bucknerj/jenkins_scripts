@@ -41,7 +41,7 @@ builds.each {
       scm('@daily')
     }
     steps {
-      shell("/bin/bash -e scripts/build.bash ${current.build}")
+      shell("/bin/bash -e config/scripts/build.bash ${current.build}")
     }
     publishers {
       mailer('bucknerj@umich.edu', true, true)
@@ -68,8 +68,8 @@ builds.each {
         upstream("build-git-${current.name}")
       }
       steps {
-        shell("/bin/bash scripts/test.bash ${current.test}")
-        shell("/bin/bash scripts/email.bash > current/email.html")
+        shell("/bin/bash config/scripts/test.bash ${current.test}")
+        shell("/bin/bash config/scripts/email.bash > current/email.html")
       }
       publishers {
         archiveXUnit {
@@ -139,7 +139,7 @@ builds.each {
       scm('@daily')
     }
     steps {
-      shell("/bin/bash -e scripts/build.bash ${current.build}")
+      shell("/bin/bash -e config/scripts/build.bash ${current.build}")
     }
     publishers {
       mailer('bucknerj@umich.edu', true, true)
@@ -166,8 +166,8 @@ builds.each {
         upstream("build-svn-${current.name}")
       }
       steps {
-        shell("/bin/bash scripts/test.bash ${current.test}")
-        shell("/bin/bash scripts/email.bash > current/email.html")
+        shell("/bin/bash config/scripts/test.bash ${current.test}")
+        shell("/bin/bash config/scripts/email.bash > current/email.html")
       }
       publishers {
         archiveXUnit {
@@ -266,7 +266,7 @@ job("build-git-cmake-${current.name}") {
     scm('@daily')
   }
   steps {
-    shell("/bin/bash -e scripts/cmake_build.bash ${current.build}")
+    shell("/bin/bash -e config/scripts/cmake_build.bash ${current.build}")
   }
   publishers {
     mailer('bucknerj@umich.edu', true, true)
@@ -293,8 +293,8 @@ job("test-git-cmake-${current.name}") {
     upstream("build-git-cmake-${current.name}")
   }
   steps {
-    shell("/bin/bash scripts/test.bash ${current.test}")
-    shell("/bin/bash scripts/email.bash > current/email.html")
+    shell("/bin/bash config/scripts/test.bash ${current.test}")
+    shell("/bin/bash config/scripts/email.bash > current/email.html")
   }
   publishers {
     archiveXUnit {
