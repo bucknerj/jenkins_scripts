@@ -12,3 +12,5 @@
 # fi
 
 # now relying on system to provide gfortran, fftw, and openmpi-gcc
+. /etc/profile.d/modules.sh
+module load mpi
