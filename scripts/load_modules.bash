@@ -15,4 +15,5 @@
 . /etc/profile.d/modules.sh
 module load mpi
 
+export PATH=/usr/local/cuda/bin:$PATH
 export FFTW_HOME=/usr
