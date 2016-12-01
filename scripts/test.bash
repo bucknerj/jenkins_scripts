@@ -3,11 +3,11 @@
 charmm_test_vars=$*
 . config/scripts/load_modules.bash $5
 
-jenkins_jobs_dir=$(dirname $(dirname "$WORKSPACE"))
+jenkins_jobs_dir=$(dirname "$WORKSPACE")
 this_job_name=$(basename "$WORKSPACE")
 up_job_name=$(echo ${this_job_name} | sed -e 's/test/build/')
 
-upstream_dir=$jenkins_jobs_dir/$up_job_name/workspace
+upstream_dir=$jenkins_jobs_dir/$up_job_name
 
 rm -f inst
 ln -sf "$upstream_dir/inst" inst
