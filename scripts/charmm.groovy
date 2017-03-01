@@ -1,10 +1,10 @@
 def builds =
   [ [name:'lite', build:'gnu lite', test:'']
-  , [name:'intel', build:'em64t M openmm mkl', test:'M 4 X 16 em64t']
-  , [name:'gpu', build:'gnu M openmm domdec_gpu fftw', test:'M 4 X 16 gnu']
+  , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 16 em64t']
+  , [name:'gpu', build:'gnu M openmm domdec_gpu fftw', test:'M 2 X 16 gnu']
   , [ name:'repdstr'
     , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI'
-    , test:'M 4 X 16 gnu'
+    , test:'M 2 X 16 gnu'
     ]
   ];
 
@@ -218,7 +218,7 @@ def cmakeBuilds =
   , [ name: 'domdec_gpu'
     , description: 'domdec_gpu and openmm'
     , build: '-u --with-gcc --without-mkl'
-    , test: 'M 4 X 16 cmake'
+    , test: 'M 2 X 16 cmake'
     ]
   , [ name: 'mndo97'
     , description: 'MNDO97'
