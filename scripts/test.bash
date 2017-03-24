@@ -47,7 +47,7 @@ else
     ln -sf "$WORKSPACE/benchmark" bench
 fi
 
-sed -e "s%@DIR@%$WORKSPACE/config%" \
+sed -e "s%@DIR@%../../config%" \
     "$WORKSPACE/config/data/sccdftb.dat" > sccdftb.dat
 
 ./test.com $charmm_test_vars output bench || true
