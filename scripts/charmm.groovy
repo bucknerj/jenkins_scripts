@@ -6,6 +6,10 @@ def builds =
     , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI'
     , test:'M 2 X 16 gnu'
     ]
+  , [ name:'misc'
+    , build:'gnu M +ABPO +ADUMBRXN +CONSHELIX +CORSOL +CVELOCI +PINS +ENSEMBLE +SAMC +MCMA +GSBP +PIPF +POLAR +PNM +RDC +RISM +ADUMBRXN +CONSPH +RUSH +TMD +DIMS +MSCALE +EDS'
+    , test:'M 2 X 16 gnu'
+    ]
   ];
 
 // umich git builds
