@@ -2,7 +2,11 @@
 
 charmm_build_vars=$*
 
-. config/scripts/load_modules.bash
+if [[ "$1" == "--with-intel" ]]; then
+  . config/scripts/load_modules.bash em64t
+else
+  . config/scripts/load_modules.bash
+fi
 
 if [[ -d bld ]]; then
 	rm -rf bld;
