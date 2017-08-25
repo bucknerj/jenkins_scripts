@@ -1,13 +1,20 @@
 #!/bin/bash
 
-charmm_test_vars=$*
-. config/scripts/load_modules.bash $5
-
 jenkins_jobs_dir=$(dirname "$WORKSPACE")
 this_job_name=$(basename "$WORKSPACE")
 up_job_name=$(echo ${this_job_name} | sed -e 's/test/build/')
 
 upstream_dir=$jenkins_jobs_dir/$up_job_name
+
+job_type=$5
+if [[ "$job_type" == "cmake" ]]; then
+  job_type=$(echo "$this_job_name" | cut -f4 -d'-')
+  if [[ "$job_type" == "intel" ]]; then
+    job_type=em64t  
+  fi
+fi
+
+. config/scripts/load_modules.bash $job_type
 
 rm -f inst
 ln -sf "$upstream_dir/inst" inst
@@ -50,6 +57,7 @@ fi
 sed -e "s%@DIR@%../../config%" \
     "$WORKSPACE/config/data/sccdftb.dat" > sccdftb.dat
 
+charmm_test_vars=$*
 ./test.com $charmm_test_vars output bench || true
 ./test.com $charmm_test_vars output bench quantum || true
 popd
