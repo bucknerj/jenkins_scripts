@@ -1,7 +1,7 @@
 from sys import argv, exit
 from itertools import dropwhile, filterfalse
 from difflib import IS_LINE_JUNK, SequenceMatcher, HtmlDiff
-from os.path import basename, isfile, join
+from os.path import basename, isfile, isdir, join
 from functools import partial
 import tempfile
 import subprocess
@@ -118,21 +118,38 @@ def process_test(to_remove, old_dir, old_fns, new_dir, new_fn):
     new_results.append('</testcase>')
     return new_results
 
-def print_results(results):
-    test_names = sorted(results.keys())
-    for t in test_names:
-        for l in results[t]:
-            print(l)
+def print_results(test_batches, results):
+    print('<?xml version="1.0" encoding="UTF-8"?>')
+    print('<testsuites>')
+    for batch_name in sorted(test_batches.keys()):
+        batch = [t for t in sorted(test_batches[batch_name])
+                 if t in results]
+        if batch:
+            print('<testsuite name="', batch_name,
+                  '" tests="', len(batch), '">',
+                  sep='')
+            
+        for t in batch:
+            for l in results[t]:
+                print(l)
+
+        if batch:
+            print('</testsuite>')
+
+    print('</testsuites>')
 
 def main():
-    if len(argv) < 4:
+    if len(argv) < 5:
         print('Usage:', argv[0],
-              '<bad patterns file>', '<old test dir>', '<new test dir>')
+              '<bad patterns file>',
+              '<test script home>',
+              '<old test dir>', '<new test dir>')
         exit(1)
         
     to_remove_fn = argv[1]
-    old_dir = argv[2]
-    new_dir = argv[3]
+    test_home = argv[2]
+    old_dir = argv[3]
+    new_dir = argv[4]
 
     new_fns = [fn for fn in os.listdir(new_dir)
                     if isfile(join(new_dir, fn))
@@ -159,8 +176,20 @@ def main():
                                            old_dir, old_fns,
                                            new_dir),
                                    test_to_file.values()))
-                               
-    print_results(dict(results))
+
+    test_dirs = [d for d in os.listdir(test_home)
+                 if isdir(join(test_home, d))
+                 and d.startswith('c')
+                 and d.endswith('test')]
+    test_batches = dict()
+    for dir in test_dirs:
+        full_path = join(test_home, dir)
+        test_batches[dir] = [basename(fn).split('.')[0]
+                             for fn in os.listdir(full_path)
+                             if isfile(join(full_path, fn))
+                             and fn.endswith('.inp')]
+        
+    print_results(test_batches, dict(results))
     exit(0)
 
 if __name__ == '__main__':
