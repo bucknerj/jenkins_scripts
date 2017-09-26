@@ -1,0 +1,80 @@
+Attempting to open
+EEMA
+Eigenvalue=
+Improved step=
+OPNLGU>
+Other:
+TIME=
+energ=
+rnew=
+! input data directory
+! scratch directory
+----------
+ALLHP:
+ALLHP>
+CGONNB =
+CGOFNB =
+ Version
+CHARMM>
+CLCG Random
+CMA: no RDMA devices found
+COLLCT_FSTSHK
+CPU TIME:
+CPU TIME=
+CREATED BY USER
+Created on
+Current HEAP
+Current operating system
+EANGLC: QANGTYPE =
+EANGLE> FORCE: ANGLE NOT FLAT
+EANGLE> Using CHARMM angle function
+ELAPSED TIME:
+Using routine
+FCTINI> Surface tension coeff
+FREHP:
+FREHP>
+FSSHKINI
+Git commit ID
+In OpenMM plugin directory
+RESIZING
+Maximum number of ATOMS:
+NBLIST_BUILDER Allocating grid
+NUMBER OF ENERGY EVALUATIONS
+New timer profile
+Number of lone-pairs
+OpenMM initiated with
+PARRDR> ALL ANGLES HAVE POSITIVE MINIMA
+PRINHP>
+Parallel load balance
+Parameter #
+Parameter:
+Processing passed argument
+QM groups found:
+QCHEM: Classical atoms excluded from the QM calculation
+RANDOM NUM
+RDCMND substituted parameter
+Reaction field dielectric
+SA modulation:
+SEEDS>
+SVN revision
+Splitting recip cores into (y by z):
+TITLE>
+TORQ> No external forces defined
+TOTAL NUMBER OF CYCLES
+There are no
+Total heap storage needed
+Using Column FFT
+Using FFTW
+Using MKL
+Using Pub FFT
+VALB CPUC
+VCLOSE:
+coor. length
+allocated space for coor
+emapwrite>
+libOmmXml
+libOpenMM
+operation not performed
+random clcg
+reference distance
+ISEED =
