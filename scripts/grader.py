@@ -7,11 +7,11 @@ import tempfile
 import subprocess
 import os
 import concurrent.futures
+import re
 
-
-def any_in(substrs, line):
+def any_in(repats, line):
     return any(True for _ in
-               dropwhile(lambda l: not l in line, substrs))
+               dropwhile(lambda repat: not repat.search(line), repats))
 
 def is_junk_line(to_remove, line):
     return any_in(to_remove, line)
@@ -27,7 +27,28 @@ def is_test_skipped(test_lines):
     return any(map(is_skip_line, test_lines))
 
 def create_filtered_file(to_remove, lines):
+    # delete junk lines
     f_lines = [l for l in lines if not is_junk_line(to_remove, l)]
+
+
+    # make substitutions
+    # s/ \./0\./g
+    # s/ -\./-0\./g
+    # s/ +\./+0\./g
+    # s/  *ISEED =  *1$//
+
+    subs = [(' \.', '0.'),
+            (' -\.', '-0.'),
+            (' +\.', '+0.'),
+            ('  *ISEED =  *1$', '')]
+    subs_comp = [(re.compile(pat), repl) for pat, repl in subs]
+    for pat, repl in subs_comp:
+        f_lines = [re.sub(pat, repl, l) for l in f_lines]
+    
+    # delete blank lines
+    f_lines = [l for l in f_lines if l.strip()]
+
+    # write lines to temp file for diffing
     f = tempfile.NamedTemporaryFile()
     for l in f_lines:
         f.write(l.encode())
@@ -160,7 +181,7 @@ def main():
 
     to_remove = []
     with open(to_remove_fn) as to_remove_f:
-        to_remove.extend([l.strip() for l in to_remove_f 
+        to_remove.extend([re.compile(l.strip()) for l in to_remove_f
                           if l.strip() and not l.startswith('#')])
 
     test_to_file = dict()
