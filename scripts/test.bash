@@ -62,7 +62,14 @@ charmm_test_vars=$*
 ./test.com $charmm_test_vars output bench quantum || true
 popd
 
-perl config/scripts/rpt2xml.pl inst/test > inst/test/output.xml
+scl enable rh-python35
+
+python config/scripts/grader.py \
+  config/scripts/bad_pats.txt \
+  inst/test \
+  previous.1/output \
+  current/output \
+  > inst/test/output.xml
 
 mkdir -p current/output
 cp inst/test/output.* current
