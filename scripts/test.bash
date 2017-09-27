@@ -62,7 +62,7 @@ charmm_test_vars=$*
 ./test.com $charmm_test_vars output bench quantum || true
 popd
 
-scl enable rh-python35
+scl enable rh-python35 bash
 
 python config/scripts/grader.py \
   config/scripts/bad_pats.txt \
