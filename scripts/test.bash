@@ -64,7 +64,8 @@ popd
 
 scl enable rh-python35 bash
 
-python config/scripts/grader.py \
+/opt/rh/rh-python35/root/usr/bin/python \
+  config/scripts/grader.py \
   config/scripts/bad_pats.txt \
   inst/test \
   previous.1/output \
