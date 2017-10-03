@@ -15,16 +15,19 @@ import re
 import difflib
 
 class TestResult:
-    def __init__(self, name, passed = False, failed = False, skipped = False, reason = '', time = 0.0):
+    def __init__(self, name, passed = False, error = False, failed = False, skipped = False, reason = '', time = 0.0):
         self.name = name
         self.passed = passed
+        self.error = error
         self.failed = failed
         self.skipped = skipped
         self.reason = reason
         self.time = time
 
     def toxml(self):
-        result = 'Fail'
+        result = 'Error'
+        if self.failed:
+            result = 'Fail'
         if self.skipped:
             result = 'Skip'
         elif self.passed:
@@ -40,6 +43,11 @@ class TestResult:
             fail_child = etree.Element('failure')
             fail_child.text = self.reason
             xml.append(fail_child)
+        elif self.error and self.reason:
+            error_child = etree.Element('error')
+            error_child.text = self.reason
+            xml.append(error_child)
+
 
         xml.set('time', str(self.time))
         return xml
@@ -58,9 +66,9 @@ def is_junk_line(to_remove, line):
 
 def is_skip_line(l):
     skip_line = False
-    if ((not "echo" in l.casefold())
+    if ((not 'echo' in l.casefold())
         and (not l.strip().startswith('!'))
-        and ("test not performed" in l.casefold())):
+        and ('test not performed' in l.casefold())):
         skip_line = True
 
     return skip_line
@@ -73,14 +81,39 @@ def is_test_skipped(test_lines):
         skip_lines = ''
     return skip_lines
 
+def is_error_line(l):
+    error_line = ''
+    test_line = l.strip().casefold()
+    if ((not 'echo' in test_line)
+        and (not test_line.startswith('!'))
+        and ('abnormal termination' in test_line)):
+        error_line = l
+
+    return error_line
+
+def is_normal_stop(l):
+    end_line = ''
+    test_line = l.strip().casefold()
+    if test_line.startswith('normal termination'):
+        end_line = l
+
+    return end_line
+
+def is_test_error(test_lines):
+    error_lines = [l for l in test_lines if is_error_line(l)]
+    if error_lines:
+        error_lines = '\n'.join(error_lines)
+    elif not [l for l in test_lines if is_normal_stop(l)]:
+        error_lines = 'no termination'
+        
+    return error_lines
+
 def is_fail_line(l):
-    fail_line = False
+    fail_line = ''
     if ((not "echo" in l.casefold())
         and (not l.strip().startswith('!'))
-        and (('testcase result: fail' in l.casefold())
-             or ('NO TERMINATION' in l.casefold())
-             or ('ABNORMAL TERMINATION' in l.casefold()))):
-        fail_line = True
+        and ('testcase result: fail' in l.casefold())):
+        fail_line = l.strip()
 
     return fail_line
 
@@ -140,14 +173,20 @@ def get_test_time(test_lines):
     return test_time
 
 def grade_test(test_name, test_lines):
-    test_result = None        
-    fail_check = is_test_failed(test_lines)
+    test_result = None
+    error_check = is_test_error(test_lines)
+
+    fail_check = None
+    if not error_check:
+        fail_check = is_test_failed(test_lines)
 
     skip_check = None
-    if not fail_check:
+    if not (fail_check or error_check):
         skip_check = is_test_skipped(test_lines)
-        
-    if fail_check:
+
+    if error_check:
+        test_result = TestResult(test_name, error = True, reason = error_check)
+    elif fail_check:
         test_result = TestResult(test_name, failed = True, reason = fail_check)
     elif skip_check:
         test_result = TestResult(test_name, skipped = True, reason = skip_check)
@@ -199,6 +238,7 @@ def process_test(to_remove, old_dir, old_fns, new_dir, new_fn):
     return test_report
 
 def print_results(test_batches, results):
+    tot_errors = 0
     tot_failures = 0
     tot_tests = 0
     tot_time = 0.0
@@ -208,6 +248,7 @@ def print_results(test_batches, results):
                  if t in results]
 
         ntests = len(batch)
+        nerrors = len([t for t in batch if results[t].error])
         nfailures = len([t for t in batch if results[t].failed])
         nskipped = len([t for t in batch if results[t].skipped])
         time = sum([results[t].time for t in batch])
@@ -215,10 +256,12 @@ def print_results(test_batches, results):
         suite = etree.Element('testsuite',
                               name = batch_name,
                               tests = str(ntests),
+                              errors = str(nerrors),
                               failures = str(nfailures),
                               skipped = str(nskipped),
                               time = str(time))
-        
+
+        tot_errors = tot_errors + nerrors
         tot_failures = tot_failures + nfailures
         tot_tests = tot_tests + ntests
         tot_time = tot_time + time
@@ -228,6 +271,7 @@ def print_results(test_batches, results):
 
         root.append(suite)
         
+    root.set('errors', str(tot_errors))
     root.set('failures', str(tot_failures))
     root.set('tests', str(tot_tests))
     root.set('time', str(tot_time))
