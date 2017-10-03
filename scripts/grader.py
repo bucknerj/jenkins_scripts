@@ -100,17 +100,21 @@ def is_normal_stop(l):
     return end_line
 
 def is_test_error(test_lines):
-    error_lines = [l for l in test_lines if is_error_line(l)]
-    if error_lines:
-        error_lines = '\n'.join(error_lines)
-    elif not [l for l in test_lines if is_normal_stop(l)]:
+    error_list = [l for l in test_lines if is_error_line(l)]
+    error_lines = '\n'.join(error_list)
+
+    stop_list = []
+    if not error_lines:
+        stop_list = [l for l in test_lines if is_normal_stop(l)]
+
+    if not error_lines and not stop_list:
         error_lines = 'no termination'
         
     return error_lines
 
 def is_fail_line(l):
     fail_line = ''
-    if ((not "echo" in l.casefold())
+    if ((not 'echo' in l.casefold())
         and (not l.strip().startswith('!'))
         and ('testcase result: fail' in l.casefold())):
         fail_line = l.strip()
@@ -118,24 +122,24 @@ def is_fail_line(l):
     return fail_line
 
 def is_test_failed(test_lines):
-    fail_lines = [l for l in test_lines if is_fail_line(l)]
-    if fail_lines:
-        fail_lines = '\n'.join(fail_lines)
-    else:
-        fail_lines = ''
+    fail_list = [l for l in test_lines if is_fail_line(l)]
+    fail_lines = '\n'.join(fail_list)
     return fail_lines
 
 def is_pass_line(l):
     pass_line = False
-    if ((not "echo" in l.casefold())
-        and (not l.strip().startswith('!'))
-        and ("testcase result: pass" in l.casefold())):
+    test_line = l.strip().casefold()
+    if ((not 'echo' in test_line)
+        and (not test_line.startswith('!'))
+        and ('testcase result: pass' in test_line)):
         pass_line = True
 
     return pass_line
 
 def is_test_passed(test_lines):
-    return any(map(is_skip_line, test_lines))
+    pass_list = [l for l in test_lines if is_pass_line(l)]
+    pass_lines = '\n'.join(pass_list)
+    return pass_lines
 
 def filter_test(to_remove, lines):
     # delete junk lines
