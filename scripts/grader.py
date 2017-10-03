@@ -25,13 +25,13 @@ class TestResult:
         self.time = time
 
     def toxml(self):
-        result = 'Error'
+        result = 'error'
         if self.failed:
-            result = 'Fail'
+            result = 'fail'
         if self.skipped:
-            result = 'Skip'
+            result = 'skip'
         elif self.passed:
-            result = 'Pass'
+            result = 'pass'
             
         xml = etree.Element('testcase', name = self.name, status = result)
 
