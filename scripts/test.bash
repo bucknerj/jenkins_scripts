@@ -70,7 +70,7 @@ popd
   config/scripts/bad_pats.txt \
   inst/test \
   previous.1/output \
-  current/output \
+  inst/test/output \
   > inst/test/output.xml
 
 mkdir -p current/output

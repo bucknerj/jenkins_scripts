@@ -25,15 +25,15 @@ page = E.html(
         E.title(job_name + ' results')
     ),
     E.body(
-        E.p('Results for',
+        E.p('Results for ',
             E.a(job_name, href = build_url),
-            'on ',
+            ' on ',
             str(datetime.datetime.now())
         ),
         E.h3('Failed tests'),
         E.pre('\n'.join(failed)),
         E.h3('Test errors'),
-        E.p('abnormal termination or no termination'),
+        E.p(E.em('abnormal termination or no termination')),
         E.pre('\n'.join(errors))
     )
 )
