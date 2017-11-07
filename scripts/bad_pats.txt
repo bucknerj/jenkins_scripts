@@ -80,3 +80,17 @@ reference distance
 ISEED =
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 BOMLEV .* IS NOT REACHED
+\*\*\*\*\* LEVEL  1 WARNING FROM <GTNBCT> \*\*\*\*\*
+\*\*\*\*\* CUTNB and CTOFNB are too close for efficient heuristic update
+\*\*\*\*\* CUTNB,CTOFNB,CTONNB are not in correct order
+DELTIC:
+\*\*\*\*\* LEVEL  0 WARNING FROM <CLIMAG> \*\*\*\*\*
+GB i ->
+\*\*\*\*\* LEVEL  1 WARNING FROM <VANGLD> \*\*\*\*\*
+\*\*\*\*\* ANORM or SNORM = 0, cannot compute angle between vectors
+Drude polarizability will be setup mass of Drudes particles
+CHARMM selection followed
+lengthScale
+Init_context: Using OpenMM platform
+OpenMM: Velocities scaled or randomized
+^1$
