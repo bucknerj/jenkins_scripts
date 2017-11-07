@@ -78,3 +78,5 @@ operation not performed
 random clcg
 reference distance
 ISEED =
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+BOMLEV .* IS NOT REACHED
