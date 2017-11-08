@@ -94,3 +94,5 @@ lengthScale
 Init_context: Using OpenMM platform
 OpenMM: Velocities scaled or randomized
 ^1$
+\*\*\*\*\* PSF modified with image centering active: Now off
+1st Helix :
