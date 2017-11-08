@@ -22,8 +22,12 @@ ln -sf "$upstream_dir/inst" inst
 for i in $(seq 30 -1 1); do
     j=$((i+1))
     if [[ -e previous.$i ]]; then
+      if [[ -e previous.$j ]]; then
         rm -rf previous.$j
-        rsync -a previous.$i/ previous.$j
+      fi
+      cp -r previous.$i previous.$j
+      tar czf previous.$j.tgz previous.$j
+      rm -rf previous.$i previous.$j
     fi
 done
 
@@ -32,7 +36,7 @@ if [[ -e previous.1 ]]; then
 fi
 
 if [[ -e current ]]; then
-    rsync -a current/ previous.1
+    cp -r current previous.1
 fi
 
 rm -f inst/test/fort.*
