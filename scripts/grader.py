@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-from sys import argv, exit, stdout
-from itertools import dropwhile, filterfalse, islice
-from difflib import IS_LINE_JUNK, SequenceMatcher, HtmlDiff
+from sys import argv, exit
+from itertools import dropwhile, islice
 from os.path import basename, isfile, isdir, join
 from functools import partial
 from lxml import etree
@@ -206,13 +205,22 @@ def compare_files(to_remove, old_lines, new_lines):
     diff = difflib.context_diff(old_clean, new_clean, 'old', 'new')
     return list(islice(diff, 30))
 
-def process_test(to_remove, old_dir, old_fns, new_dir, new_fn):
+def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
+            
     with open(join(new_dir, new_fn), errors = 'replace') as new_file:
         new_lines = new_file.readlines()
 
     test_name = basename(new_fn).split('.')[0]
-    test_report = grade_test(test_name, new_lines)
     test_time = get_test_time(new_lines)
+
+    if any(map(lambda x: x.search(test_name), to_skip)):
+        return TestResult(test_name,
+                          skipped = True,
+                          reason = 'test intentionally not graded (see output.xfail)',
+                          time = test_time)
+            
+    test_report = grade_test(test_name, new_lines)
+
 
     report_lines = ''
     if test_report:
@@ -285,17 +293,19 @@ def print_results(test_batches, results):
                          pretty_print=True).decode(errors = 'replace'))
         
 def main():
-    if len(argv) < 5:
+    if len(argv) < 6:
         print('Usage:', argv[0],
               '<bad patterns file>',
+              '<tests to ignore file>',
               '<test script home>',
               '<old test dir>', '<new test dir>')
         exit(1)
 
     to_remove_fn = argv[1]
-    test_home = argv[2]
-    old_dir = argv[3]
-    new_dir = argv[4]
+    to_skip_fn = argv[2]
+    test_home = argv[3]
+    old_dir = argv[4]
+    new_dir = argv[5]
 
     new_fns = [fn for fn in os.listdir(new_dir)
                     if isfile(join(new_dir, fn))
@@ -309,6 +319,11 @@ def main():
         to_remove.extend([re.compile(l.strip()) for l in to_remove_f
                           if l.strip() and not l.startswith('#')])
 
+    to_skip = []
+    with open(to_skip_fn) as to_skip_f:
+        to_skip.extend([re.compile(l.strip()) for l in to_skip_f
+                          if l.strip() and not l.startswith('#')])
+
     test_to_file = dict()
     for new_fn in new_fns:
         test_name = basename(new_fn).split('.')[0]
@@ -318,7 +333,7 @@ def main():
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = zip(test_to_file.keys(),
                       executor.map(partial(process_test,
-                                           to_remove,
+                                           to_remove, to_skip,
                                            old_dir, old_fns,
                                            new_dir),
                                    test_to_file.values()))
