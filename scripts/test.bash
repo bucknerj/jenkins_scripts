@@ -72,6 +72,7 @@ popd
 /opt/rh/rh-python35/root/usr/bin/python \
   config/scripts/grader.py \
   config/scripts/bad_pats.txt \
+  output.xfail \
   inst/test \
   previous.1/output \
   inst/test/output \
