@@ -213,7 +213,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
     test_name = basename(new_fn).split('.')[0]
     test_time = get_test_time(new_lines)
 
-    if any(map(lambda x: x.search(test_name), to_skip)):
+    if any(map(lambda x: x == test_name, to_skip)):
         return TestResult(test_name,
                           skipped = True,
                           reason = 'test intentionally not graded (see output.xfail)',
@@ -321,7 +321,7 @@ def main():
 
     to_skip = []
     with open(to_skip_fn) as to_skip_f:
-        to_skip.extend([re.compile(l.strip()) for l in to_skip_f
+        to_skip.extend([l.strip() for l in to_skip_f
                           if l.strip() and not l.startswith('#')])
 
     test_to_file = dict()
