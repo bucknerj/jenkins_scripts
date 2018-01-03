@@ -63,7 +63,6 @@ sed -e "s%@DIR@%../../config%" \
 
 charmm_test_vars=$*
 ./test.com $charmm_test_vars output bench || true
-./test.com $charmm_test_vars output bench quantum || true
 popd
 
 # scl enable rh-python35 bash
