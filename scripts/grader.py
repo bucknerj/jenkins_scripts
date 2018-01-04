@@ -160,6 +160,12 @@ def filter_test(to_remove, lines):
 
     # delete blank lines
     f_lines = [l for l in f_lines if l.strip()]
+
+    # remove negative zeros: -0.00 -> 0.00, -0 -> 0, -0.05 -> -0.05
+    pat = re.compile('-(0\.?0*(\s|$))')
+    repl = r'\1'
+    f_lines = [re.sub(pat, repl, l) for l in f_lines]
+    
     return f_lines
 
 def get_test_time(test_lines):
