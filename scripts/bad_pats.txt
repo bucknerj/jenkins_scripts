@@ -99,13 +99,14 @@ OpenMM: Velocities scaled or randomized
 \*\*\*\*\* PSF modified with image centering active: Now off
 1st Helix :
 SELRPN>
-DRIFT/STEP (LAST-TOTAL):
+DRIFT
 CORR. COEFFICIENT      :
 VELOCITY          :
 KINETIC ENERGY    :
 FLUC EWALD>
 MINI
 DYNA XTLE>
+DYNA PRESS>
 C00. has
 residues were included
 RANDSPEC> seeds
