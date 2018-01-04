@@ -31,7 +31,7 @@ class TestResult:
             result = 'skip'
         elif self.passed:
             result = 'pass'
-            
+
         xml = etree.Element('testcase', name = self.name, status = result)
 
         if self.skipped and self.reason:
@@ -108,7 +108,7 @@ def is_test_error(test_lines):
 
     if not error_lines and not stop_list:
         error_lines = 'no termination'
-        
+
     return error_lines
 
 def is_fail_line(l):
@@ -165,7 +165,7 @@ def filter_test(to_remove, lines):
     pat = re.compile('-(0\.?0*(\s|$))')
     repl = r'\1'
     f_lines = [re.sub(pat, repl, l) for l in f_lines]
-    
+
     return f_lines
 
 def get_test_time(test_lines):
@@ -212,7 +212,7 @@ def compare_files(to_remove, old_lines, new_lines):
     return list(islice(diff, 30))
 
 def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
-            
+
     with open(join(new_dir, new_fn), errors = 'replace') as new_file:
         new_lines = new_file.readlines()
 
@@ -224,7 +224,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
                           skipped = True,
                           reason = 'test intentionally not graded (see output.xfail)',
                           time = test_time)
-            
+
     test_report = grade_test(test_name, new_lines)
 
 
@@ -288,16 +288,16 @@ def print_results(test_batches, results):
             suite.append(results[t].toxml())
 
         root.append(suite)
-        
+
     root.set('errors', str(tot_errors))
     root.set('failures', str(tot_failures))
     root.set('tests', str(tot_tests))
     root.set('time', str(tot_time))
-    
+
     print(etree.tostring(root,
                          xml_declaration=True,
                          pretty_print=True).decode(errors = 'replace'))
-        
+
 def main():
     if len(argv) < 6:
         print('Usage:', argv[0],
