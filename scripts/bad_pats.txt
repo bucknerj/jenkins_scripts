@@ -113,3 +113,5 @@ RANDSPEC> seeds
 test_.* OK
 RDCMND
 Evaluating:
+ERROR in DISPOS
+Changing to KEEP
