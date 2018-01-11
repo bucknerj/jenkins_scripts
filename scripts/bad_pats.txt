@@ -111,3 +111,5 @@ C00. has
 residues were included
 RANDSPEC> seeds
 test_.* OK
+RDCMND
+Evaluating:
