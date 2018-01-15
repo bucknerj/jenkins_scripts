@@ -126,3 +126,6 @@ WRNMXD =
 E14FAC =
 EPS    =
 NBXMOD =
+WARNING FROM
+XNSYMM is zero: build crystal
+BOMLEV .* IS NOT REACHED
