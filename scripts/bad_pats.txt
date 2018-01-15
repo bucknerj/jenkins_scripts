@@ -116,6 +116,13 @@ Evaluating:
 ERROR in DISPOS
 Changing to KEEP
 CUTNB  =
+CTEXNB =
+CTONNB =
+CTOFNB =
 CGONNB =
+CGOFNB =
 WMIN   =
+WRNMXD =
+E14FAC =
+EPS    =
 NBXMOD =
