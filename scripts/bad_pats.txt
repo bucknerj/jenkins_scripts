@@ -115,3 +115,7 @@ RDCMND
 Evaluating:
 ERROR in DISPOS
 Changing to KEEP
+CUTNB  =
+CGONNB =
+WMIN   =
+NBXMOD =
