@@ -129,3 +129,10 @@ NBXMOD =
 WARNING FROM
 XNSYMM is zero: build crystal
 BOMLEV .* IS NOT REACHED
+<GEO> RMAX: second selection .* done
+Harmonic constraint, keep inside the maximum radius
+MMFP> WARNING: ANGLE/DIHEDRAL SAWO
+Sphere constraint
+Cylinder constraint
+Plane constraint
+symmetric constraint
