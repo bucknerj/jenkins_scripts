@@ -7,7 +7,7 @@ def builds =
     , test:'M 2 X 16 gnu'
     ]
   , [ name:'misc'
-    , build:'gnu M +ABPO +ADUMBRXN +CORSOL +CVELOCI +PINS +ENSEMBLE +SAMC +MCMA +GSBP +PIPF +POLAR +PNM +RISM +ADUMBRXN +CONSPH +RUSH +TMD +DIMS +MSCALE +EDS'
+    , build:'gnu M +ABPO +ADUMBRXNCOR +ROLLRXNCOR +CORSOL +CVELOCI +PINS +ENSEMBLE +SAMC +MCMA +GSBP +PIPF +POLAR +PNM +RISM +CONSPH +RUSH +TMD +DIMS +MSCALE +EDS'
     , test:'M 2 X 16 gnu'
     ]
   , [ name:'stringm', build:'gnu M stringm', test:'M 8 X 16 gnu' ]
