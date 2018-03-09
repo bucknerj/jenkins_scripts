@@ -136,7 +136,7 @@ Sphere constraint
 Cylinder constraint
 Plane constraint
 symmetric constraint
-Coordiantes were overwritten for
+Coordinates were overwritten
 Parameter: DROFF
 GEO INITIALIZED
 Center of mass constraint
