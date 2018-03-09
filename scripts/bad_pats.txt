@@ -137,3 +137,9 @@ Cylinder constraint
 Plane constraint
 symmetric constraint
 Coordiantes were overwritten for
+Parameter: DROFF
+GEO INITIALIZED
+Center of mass constraint
+new constraints applied on
+the total number of constraints is
+the total number of atoms affected is
