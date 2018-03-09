@@ -136,3 +136,4 @@ Sphere constraint
 Cylinder constraint
 Plane constraint
 symmetric constraint
+Coordiantes were overwritten for
