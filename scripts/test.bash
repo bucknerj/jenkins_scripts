@@ -8,10 +8,10 @@ upstream_dir=$jenkins_jobs_dir/$up_job_name
 
 job_type=$5
 if [[ "$job_type" == "cmake" ]]; then
-  job_type=$(echo "$this_job_name" | cut -f4 -d'-')
-  if [[ "$job_type" == "intel" ]]; then
-    job_type=em64t  
-  fi
+    job_test=$(echo "$this_job_name" | cut -f4 -d'-')
+    if [[ "$job_test" == "intel" ]]; then
+        job_type=em64t  
+    fi
 fi
 
 . config/scripts/load_modules.bash $job_type
@@ -21,22 +21,18 @@ ln -sf "$upstream_dir/inst" inst
 
 for i in $(seq 30 -1 1); do
     j=$((i+1))
-    if [[ -e previous.$i ]]; then
-      if [[ -e previous.$j ]]; then
-        rm -rf previous.$j
-      fi
-      cp -r previous.$i previous.$j
-      tar czf previous.$j.tgz previous.$j
-      rm -rf previous.$i previous.$j
+    if [[ -e old.$i.tgz ]]; then
+      cp old.$i.tgz old.$j.tgz
     fi
 done
 
-if [[ -e previous.1 ]]; then
-    rm -rf previous.1
+if [[ -e old ]]; then
+    tar czf old.1.tgz old
+    rm -rf old
 fi
 
-if [[ -e current ]]; then
-    cp -r current previous.1
+if [[ -e new ]]; then
+    mv new old
 fi
 
 rm -f inst/test/fort.*
@@ -51,12 +47,7 @@ fi
 
 pushd inst/test
 ln -sf "$WORKSPACE/output.xfail" output.xfail
-
-if [[ -e "$WORKSPACE/previous.1/output" ]]; then
-    ln -sf "$WORKSPACE/previous.1/output" bench
-else
-    ln -sf "$WORKSPACE/benchmark" bench
-fi
+ln -sf "$WORKSPACE/old/output" bench
 
 sed -e "s%@DIR@%../../config%" \
     "$WORKSPACE/config/data/sccdftb.dat" > sccdftb.dat
@@ -65,18 +56,15 @@ charmm_test_vars=$*
 ./test.com $charmm_test_vars output bench || true
 popd
 
-# scl enable rh-python35 bash
-. /opt/rh/rh-python35/enable
-
 /opt/rh/rh-python35/root/usr/bin/python \
   config/scripts/grader.py \
   config/scripts/bad_pats.txt \
   output.xfail \
   inst/test \
-  previous.1/output \
+  old/output \
   inst/test/output \
   > inst/test/output.xml
 
-mkdir -p current/output
-cp inst/test/output.* current
-cp inst/test/output/*.out current/output
+mkdir -p new/output
+cp inst/test/output.* new
+cp inst/test/output/*.out new/output

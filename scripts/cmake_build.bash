@@ -5,7 +5,7 @@ charmm_build_vars=$*
 if [[ "$1" == "--with-intel" ]]; then
   . config/scripts/load_modules.bash em64t
 else
-  . config/scripts/load_modules.bash
+  . config/scripts/load_modules.bash cmake
 fi
 
 if [[ -d bld ]]; then
@@ -19,6 +19,10 @@ fi
 mkdir bld
 
 pushd bld
-../charmm/configure -p ../inst $charmm_build_vars
+if [[ "$1" == "--with-intel" ]]; then
+    ../charmm/configure -p ../inst $charmm_build_vars
+else
+    ../charmm/configure -p ../inst $charmm_build_vars -D CUDA_HOST_COMPILER=/usr/bin/g++
+fi
 make -j4 install
 popd
