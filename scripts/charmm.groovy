@@ -94,28 +94,6 @@ builds.each {
           }
           thresholdMode(ThresholdMode.PERCENT)
         }
-        extendedEmail {
-          recipientList('bucknerj@umich.edu')
-          defaultSubject("test git ${current.name}")
-          preSendScript('''
-              msg.setContent(
-                new File("${workspace}/new/email.html").text,
-                "text/html")
-          ''')
-          triggers {
-            always {
-              sendTo {
-                recipientList()
-              }
-            }
-            firstFailure {
-              sendTo {
-                recipientList()
-                culprits()
-              }
-            }
-          }
-        }
       }
     } // end git test job
   } // end if current.test
@@ -191,28 +169,6 @@ builds.each {
             unstableNew(50)
           }
           thresholdMode(ThresholdMode.PERCENT)
-        }
-        extendedEmail {
-          recipientList('bucknerj@umich.edu')
-          defaultSubject("test svn ${current.name}")
-          preSendScript('''
-              msg.setContent(
-                new File("${workspace}/new/email.html").text,
-                "text/html")
-          ''')
-          triggers {
-            always {
-              sendTo {
-                recipientList()
-              }
-            }
-            firstFailure {
-              sendTo {
-                recipientList()
-                culprits()
-              }
-            }
-          }
         }
       }
     }  // end svn test
@@ -319,28 +275,6 @@ job("test-git-cmake-${current.name}") {
         unstableNew(50)
       }
       thresholdMode(ThresholdMode.PERCENT)
-    }
-    extendedEmail {
-      recipientList('bucknerj@umich.edu')
-      defaultSubject("test git cmake ${current.name}")
-      preSendScript('''
-          msg.setContent(
-            new File("${workspace}/new/email.html").text,
-            "text/html")
-      ''')
-      triggers {
-        always {
-          sendTo {
-            recipientList()
-          }
-        }
-        firstFailure {
-          sendTo {
-            recipientList()
-            culprits()
-          }
-        }
-      }
     }
   }
 } // end git CMake test job
