@@ -79,12 +79,12 @@ builds.each {
       }
       steps {
         shell("/bin/bash config/scripts/test.bash ${current.test}")
-        shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > current/email.html")
+        shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > new/email.html")
       }
       publishers {
         archiveXUnit {
           jUnit {
-            pattern('current/output.xml')
+            pattern('new/output.xml')
           }
           skippedThresholds {
             failure(80)
@@ -99,7 +99,7 @@ builds.each {
           defaultSubject("test git ${current.name}")
           preSendScript('''
               msg.setContent(
-                new File("${workspace}/current/email.html").text,
+                new File("${workspace}/new/email.html").text,
                 "text/html")
           ''')
           triggers {
@@ -177,12 +177,12 @@ builds.each {
       }
       steps {
         shell("/bin/bash config/scripts/test.bash ${current.test}")
-        shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > current/email.html")
+        shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > new/email.html")
       }
       publishers {
         archiveXUnit {
           jUnit {
-            pattern('current/output.xml')
+            pattern('new/output.xml')
           }
           skippedThresholds {
             failure(80)
@@ -197,7 +197,7 @@ builds.each {
           defaultSubject("test svn ${current.name}")
           preSendScript('''
               msg.setContent(
-                new File("${workspace}/current/email.html").text,
+                new File("${workspace}/new/email.html").text,
                 "text/html")
           ''')
           triggers {
@@ -305,12 +305,12 @@ job("test-git-cmake-${current.name}") {
   }
   steps {
     shell("/bin/bash config/scripts/test.bash ${current.test}")
-    shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > current/email.html")
+    shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > new/email.html")
   }
   publishers {
     archiveXUnit {
       jUnit {
-        pattern('current/output.xml')
+        pattern('new/output.xml')
       }
       skippedThresholds {
         failure(80)
@@ -325,7 +325,7 @@ job("test-git-cmake-${current.name}") {
       defaultSubject("test git cmake ${current.name}")
       preSendScript('''
           msg.setContent(
-            new File("${workspace}/current/email.html").text,
+            new File("${workspace}/new/email.html").text,
             "text/html")
       ''')
       triggers {
