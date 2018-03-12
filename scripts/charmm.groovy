@@ -79,7 +79,6 @@ builds.each {
       }
       steps {
         shell("/bin/bash config/scripts/test.bash ${current.test}")
-        shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > new/email.html")
       }
       publishers {
         archiveXUnit {
@@ -155,7 +154,6 @@ builds.each {
       }
       steps {
         shell("/bin/bash config/scripts/test.bash ${current.test}")
-        shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > new/email.html")
       }
       publishers {
         archiveXUnit {
@@ -261,7 +259,6 @@ job("test-git-cmake-${current.name}") {
   }
   steps {
     shell("/bin/bash config/scripts/test.bash ${current.test}")
-    shell(". /opt/rh/rh-python35/enable; /opt/rh/rh-python35/root/usr/bin/python config/scripts/email.py > new/email.html")
   }
   publishers {
     archiveXUnit {
