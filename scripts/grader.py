@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
-from itertools import dropwhile, islice
-from os.path import basename, isfile, isdir, join
-from functools import partial
-
-import tempfile
-import subprocess
-import os
 import concurrent.futures
-import re
 import difflib
-import xml.etree.ElementTree as etree
+import functools
+import itertools
+import os
+import os.path
+import re
+import subprocess
 import sys
+import tempfile
+import xml.etree.ElementTree as etree
 
 class TestResult:
     def __init__(self, name, passed = False, error = False, failed = False, skipped = False, reason = '', time = 0.0):
@@ -58,7 +57,7 @@ class TestResult:
 
 def any_in(repats, line):
     return any(True for _ in
-               dropwhile(lambda repat: not repat.search(line), repats))
+               itertools.dropwhile(lambda repat: not repat.search(line), repats))
 
 def is_junk_line(to_remove, line):
     return any_in(to_remove, line)
@@ -209,14 +208,14 @@ def compare_files(to_remove, old_lines, new_lines):
     new_clean = filter_test(to_remove, new_lines)
 
     diff = difflib.context_diff(old_clean, new_clean, 'old', 'new')
-    return list(islice(diff, 30))
+    return list(itertools.islice(diff, 30))
 
 def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
 
-    with open(join(new_dir, new_fn), errors = 'replace') as new_file:
+    with open(os.path.join(new_dir, new_fn), errors = 'replace') as new_file:
         new_lines = new_file.readlines()
 
-    test_name = basename(new_fn).split('.')[0]
+    test_name = os.path.basename(new_fn).split('.')[0]
     test_time = get_test_time(new_lines)
 
     if any(map(lambda x: x == test_name, to_skip)):
@@ -237,7 +236,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
                                  reason = 'NEW TEST',
                                  time = test_time)
     else:
-        with open(join(old_dir, new_fn), errors = 'replace') as old_file:
+        with open(os.path.join(old_dir, new_fn), errors = 'replace') as old_file:
             old_lines = old_file.readlines()
 
         report_lines = compare_files(to_remove, old_lines, new_lines)
@@ -295,7 +294,7 @@ def print_results(xml_fname, test_batches, results):
     root.set('time', str(tot_time))
 
     tree = etree.ElementTree(root)
-    tree.write(xml_fname)
+    tree.write(xml_fname, xml_declaration=True, short_empty_elements=False)
 
 def main():
     if len(sys.argv) < 6:
@@ -314,10 +313,10 @@ def main():
     xml_fname = sys.argv[6]
 
     new_fns = [fn for fn in os.listdir(new_dir)
-                    if isfile(join(new_dir, fn))
+                    if os.path.isfile(os.path.join(new_dir, fn))
                     and fn.endswith(".out")]
     old_fns = [fn for fn in os.listdir(old_dir)
-                    if isfile(join(old_dir, fn))
+                    if os.path.isfile(os.path.join(old_dir, fn))
                     and fn.endswith(".out")]
 
     to_remove = []
@@ -332,28 +331,28 @@ def main():
 
     test_to_file = dict()
     for new_fn in new_fns:
-        test_name = basename(new_fn).split('.')[0]
+        test_name = os.path.basename(new_fn).split('.')[0]
         test_to_file[test_name] = new_fn
 
     results = []
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = zip(test_to_file.keys(),
-                      executor.map(partial(process_test,
+                      executor.map(functools.partial(process_test,
                                            to_remove, to_skip,
                                            old_dir, old_fns,
                                            new_dir),
                                    test_to_file.values()))
 
     test_dirs = [d for d in os.listdir(test_home)
-                 if isdir(join(test_home, d))
+                 if os.path.isdir(os.path.join(test_home, d))
                  and d.startswith('c')
                  and d.endswith('test')]
     test_batches = dict()
     for dir in test_dirs:
-        full_path = join(test_home, dir)
-        test_batches[dir] = [basename(fn).split('.')[0]
+        full_path = os.path.join(test_home, dir)
+        test_batches[dir] = [os.path.basename(fn).split('.')[0]
                              for fn in os.listdir(full_path)
-                             if isfile(join(full_path, fn))
+                             if os.path.isfile(os.path.join(full_path, fn))
                              and fn.endswith('.inp')]
 
     print_results(xml_fname, test_batches, dict(results))
