@@ -63,7 +63,7 @@ popd
   inst/test \
   old/output \
   inst/test/output \
-  > inst/test/output.xml
+  inst/test/output.xml
 
 mkdir -p new/output
 cp inst/test/output.* new

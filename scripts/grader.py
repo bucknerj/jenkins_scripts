@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-from sys import argv, exit
 from itertools import dropwhile, islice
 from os.path import basename, isfile, isdir, join
 from functools import partial
-from lxml import etree
 
 import tempfile
 import subprocess
@@ -12,6 +10,8 @@ import os
 import concurrent.futures
 import re
 import difflib
+import xml.etree.ElementTree as etree
+import sys
 
 class TestResult:
     def __init__(self, name, passed = False, error = False, failed = False, skipped = False, reason = '', time = 0.0):
@@ -255,7 +255,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
 
     return test_report
 
-def print_results(test_batches, results):
+def print_results(xml_fname, test_batches, results):
     tot_errors = 0
     tot_failures = 0
     tot_tests = 0
@@ -294,24 +294,24 @@ def print_results(test_batches, results):
     root.set('tests', str(tot_tests))
     root.set('time', str(tot_time))
 
-    print(etree.tostring(root,
-                         xml_declaration=True,
-                         pretty_print=True).decode(errors = 'replace'))
+    tree = etree.ElementTree(root)
+    tree.write(xml_fname)
 
 def main():
-    if len(argv) < 6:
-        print('Usage:', argv[0],
+    if len(sys.argv) < 6:
+        print('Usage:', sys.argv[0],
               '<bad patterns file>',
               '<tests to ignore file>',
               '<test script home>',
               '<old test dir>', '<new test dir>')
-        exit(1)
+        sys.exit(1)
 
-    to_remove_fn = argv[1]
-    to_skip_fn = argv[2]
-    test_home = argv[3]
-    old_dir = argv[4]
-    new_dir = argv[5]
+    to_remove_fn = sys.argv[1]
+    to_skip_fn = sys.argv[2]
+    test_home = sys.argv[3]
+    old_dir = sys.argv[4]
+    new_dir = sys.argv[5]
+    xml_fname = sys.argv[6]
 
     new_fns = [fn for fn in os.listdir(new_dir)
                     if isfile(join(new_dir, fn))
@@ -356,8 +356,8 @@ def main():
                              if isfile(join(full_path, fn))
                              and fn.endswith('.inp')]
 
-    print_results(test_batches, dict(results))
-    exit(0)
+    print_results(xml_fname, test_batches, dict(results))
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()
