@@ -19,3 +19,4 @@ fi
 
 export PATH=/usr/local/cuda/bin:$PATH
 export FFTW_HOME=/usr
+export CUDA_HOST_COMPILER=/usr/bin/g++
