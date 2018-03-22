@@ -144,3 +144,6 @@ new constraints applied on
 the total number of constraints is
 the total number of atoms affected is
 floating-point exceptions
+CONSTRAINTS RESETED
+Constraints :
+Number of selected atoms
