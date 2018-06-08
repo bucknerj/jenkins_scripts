@@ -169,10 +169,13 @@ def filter_test(to_remove, lines):
 
 def get_test_time(test_lines):
     test_time = 0.0
-    test_time_line = test_lines[-2].split()
-    if len(test_time_line) >= 3:
-        test_time = test_time_line[2]
 
+    try:
+        test_time_line = test_lines[-2].split()
+        test_time = test_time_line[2]
+    except IndexError:
+        test_time = 0.0
+        
     try:
         test_time = float(test_time)
     except ValueError:

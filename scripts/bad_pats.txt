@@ -147,3 +147,4 @@ floating-point exceptions
 CONSTRAINTS RESETED
 Constraints :
 Number of selected atoms
+----------       ---------    ---------    ---------    ---------    ---------
