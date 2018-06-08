@@ -1,7 +1,7 @@
 . /opt/rh/rh-python35/enable
 . /etc/profile.d/modules.sh
 
-module load cuda/9.1
+module load cuda/system
 
 if [[ "$1" == "em64t" ]]; then
     module load openmm/7.1
