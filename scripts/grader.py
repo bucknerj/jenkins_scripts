@@ -256,9 +256,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
 
     return test_report
 
-def print_results(xml_fname, test_batches, results):
-    first = True
-    xml_f = open(xml_fname, 'w')
+def print_results(xml_dir, test_batches, results):
     for batch_name in sorted(test_batches.keys()):
         batch = [t for t in sorted(test_batches[batch_name])
                  if t in results]
@@ -281,21 +279,21 @@ def print_results(xml_fname, test_batches, results):
             suite.append(results[t].toxml())
 
         tree = etree.ElementTree(suite)
-        tree.write(xml_f,
-                   encoding = 'unicode',
-                   xml_declaration = first,
-                   short_empty_elements = False)
-        first = False
-
-    xml_f.close()
+        output_filename = os.path.join(xml_dir, batch_name + '.xml')
+        with open(output_filename, 'w') as output_file:
+            tree.write(output_file,
+                       encoding = 'unicode',
+                       xml_declaration = True,
+                       short_empty_elements = False)
 
 def main():
-    if len(sys.argv) < 6:
+    if len(sys.argv) < 7:
         print('Usage:', sys.argv[0],
               '<bad patterns file>',
               '<tests to ignore file>',
               '<test script home>',
-              '<old test dir>', '<new test dir>')
+              '<old test dir>', '<new test dir>',
+              '<output dir>')
         sys.exit(1)
 
     to_remove_fn = sys.argv[1]
@@ -303,7 +301,7 @@ def main():
     test_home = sys.argv[3]
     old_dir = sys.argv[4]
     new_dir = sys.argv[5]
-    xml_fname = sys.argv[6]
+    xml_dir = sys.argv[6]
 
     new_fns = [fn for fn in os.listdir(new_dir)
                     if os.path.isfile(os.path.join(new_dir, fn))
@@ -338,8 +336,8 @@ def main():
 
     test_dirs = [d for d in os.listdir(test_home)
                  if os.path.isdir(os.path.join(test_home, d))
-                 and d.startswith('c')
-                 and d.endswith('test')]
+                 and re.match(r'c\d{2}test', d)]
+
     test_batches = dict()
     for dir in test_dirs:
         full_path = os.path.join(test_home, dir)
@@ -348,7 +346,7 @@ def main():
                              if os.path.isfile(os.path.join(full_path, fn))
                              and fn.endswith('.inp')]
 
-    print_results(xml_fname, test_batches, dict(results))
+    print_results(xml_dir, test_batches, dict(results))
     sys.exit(0)
 
 if __name__ == '__main__':

@@ -56,6 +56,9 @@ charmm_test_vars=$*
 ./test.com $charmm_test_vars output bench || true
 popd
 
+mkdir -p new/output
+mkdir -p new/xml
+
 /opt/rh/rh-python35/root/usr/bin/python \
   config/scripts/grader.py \
   config/scripts/bad_pats.txt \
@@ -63,8 +66,7 @@ popd
   inst/test \
   old/output \
   inst/test/output \
-  inst/test/output.xml
+  new/xml
 
-mkdir -p new/output
 cp inst/test/output.* new
 cp inst/test/output/*.out new/output
