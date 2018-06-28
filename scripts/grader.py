@@ -258,6 +258,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
 
 def print_results(xml_fname, test_batches, results):
     first = True
+    xml_f = open(xml_fname, 'w')
     for batch_name in sorted(test_batches.keys()):
         batch = [t for t in sorted(test_batches[batch_name])
                  if t in results]
@@ -280,10 +281,13 @@ def print_results(xml_fname, test_batches, results):
             suite.append(results[t].toxml())
 
         tree = etree.ElementTree(suite)
-        tree.write(xml_fname,
+        tree.write(xml_f,
+                   encoding = 'unicode',
                    xml_declaration = first,
                    short_empty_elements = False)
         first = False
+
+    xml_f.close()
 
 def main():
     if len(sys.argv) < 6:
