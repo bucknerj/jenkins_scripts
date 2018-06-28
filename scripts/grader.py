@@ -31,7 +31,7 @@ class TestResult:
         elif self.passed:
             result = 'pass'
 
-        xml = etree.Element('testcase', name = self.name, status = result)
+        xml = etree.Element('testcase', name = self.name)
 
         if self.skipped and self.reason:
             skip_child = etree.Element('skipped')
@@ -46,8 +46,7 @@ class TestResult:
             error_child.text = self.reason
             xml.append(error_child)
 
-
-        xml.set('time', str(self.time))
+        xml.set('time', '{0.3g}'.format(self.time))
         return xml
 
     def tostring(self):
@@ -175,7 +174,7 @@ def get_test_time(test_lines):
         test_time = test_time_line[2]
     except IndexError:
         test_time = 0.0
-        
+
     try:
         test_time = float(test_time)
     except ValueError:
@@ -258,11 +257,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
     return test_report
 
 def print_results(xml_fname, test_batches, results):
-    tot_errors = 0
-    tot_failures = 0
-    tot_tests = 0
-    tot_time = 0.0
-    root = etree.Element('testsuites')
+    first = True
     for batch_name in sorted(test_batches.keys()):
         batch = [t for t in sorted(test_batches[batch_name])
                  if t in results]
@@ -279,25 +274,16 @@ def print_results(xml_fname, test_batches, results):
                               errors = str(nerrors),
                               failures = str(nfailures),
                               skipped = str(nskipped),
-                              time = str(time))
-
-        tot_errors = tot_errors + nerrors
-        tot_failures = tot_failures + nfailures
-        tot_tests = tot_tests + ntests
-        tot_time = tot_time + time
+                              time = '{0:.3g}'.format(time))
 
         for t in batch:
             suite.append(results[t].toxml())
 
-        root.append(suite)
-
-    root.set('errors', str(tot_errors))
-    root.set('failures', str(tot_failures))
-    root.set('tests', str(tot_tests))
-    root.set('time', str(tot_time))
-
-    tree = etree.ElementTree(root)
-    tree.write(xml_fname, xml_declaration=True, short_empty_elements=False)
+        tree = etree.ElementTree(suite)
+        tree.write(xml_fname,
+                   xml_declaration = first,
+                   short_empty_elements = False)
+        first = False
 
 def main():
     if len(sys.argv) < 6:
