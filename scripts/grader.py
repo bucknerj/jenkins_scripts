@@ -46,7 +46,7 @@ class TestResult:
             error_child.text = self.reason
             xml.append(error_child)
 
-        xml.set('time', '{0:.3g}'.format(self.time))
+        xml.set('time', '{0:.3f}'.format(self.time))
         return xml
 
     def tostring(self):
@@ -273,7 +273,7 @@ def print_results(xml_dir, test_batches, results):
                               errors = str(nerrors),
                               failures = str(nfailures),
                               skipped = str(nskipped),
-                              time = '{0:.3g}'.format(time))
+                              time = '{0:.3f}'.format(time))
 
         for t in batch:
             suite.append(results[t].toxml())
