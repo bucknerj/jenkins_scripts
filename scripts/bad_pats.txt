@@ -148,3 +148,5 @@ CONSTRAINTS RESETED
 Constraints :
 Number of selected atoms
 ----------       ---------    ---------    ---------    ---------    ---------
+There are .* atom  pairs and .* atom  exclusions
+IEEE_
