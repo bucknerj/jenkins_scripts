@@ -11,6 +11,10 @@ elif [[ "$1" == "cmake" ]]; then
     module load openmm/7.2
     . /opt/rh/devtoolset-7/enable
     module load mpi/3.1-gcc-7.3
+elif [[ "$1" == "pgi" ]]; then 
+    . /opt/rh/devtoolset-7/enable
+    module load openmm/7.2
+    module load pgi/18.4
 else
     module load openmm/7.1
     module load mpi/1.10.5
