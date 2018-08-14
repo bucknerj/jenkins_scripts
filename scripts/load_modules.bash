@@ -3,6 +3,8 @@
 
 module load cuda/system
 
+export FFTW_HOME=/usr
+
 if [[ "$1" == "em64t" ]]; then
     module load openmm/7.1
     module load intel/18.x
@@ -19,6 +21,3 @@ else
     module load openmm/7.1
     module load mpi/1.10.5
 fi
-
-export CUDA_HOST_COMPILER=/usr/bin/g++
-export FFTW_HOME=/usr
