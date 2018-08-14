@@ -185,7 +185,7 @@ def cmakeBuilds =
     , test: 'M 2 X 16 cmake'
     ]
    , [name:'intel', build:'--with-intel', test:'M 2 X 16 cmake']
-   , [name:'pgi', build:'--with-pgi -u -D CUDA_HOST_COMPILER=$(which pgc++)', test:'M 2 X 16 cmake']
+   , [name:'pgi', build:'--with-pgi -u -D CUDA_HOST_COMPILER=/home/apps/pgi/2018/linux86-64/2018/bin/pgc++', test:'M 2 X 16 cmake']
   , [ name: 'mndo97'
     , description: 'MNDO97'
     , build: '-a MNDO97 -r QUANTUM,QCHEM --with-gcc --without-mkl'
