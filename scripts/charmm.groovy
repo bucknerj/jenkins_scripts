@@ -105,10 +105,15 @@ builds.each {
     displayName("build svn ${current.name}")
     description("install.com ${current.build} debug keepf nolog")
     multiscm {
-      svn {
-        location('svn://charmm.hanyang.ac.kr/charmm/trunk') {
-          credentials('svn')
-          directory('charmm')
+     git {
+        branch('hanyang')
+        remote {
+          name('origin')
+          url('brooks:/export/git/charmm.git')
+          credentials('git')
+        }
+        extensions {
+          relativeTargetDirectory('charmm')
         }
       }
       git {
