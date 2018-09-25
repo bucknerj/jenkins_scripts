@@ -150,3 +150,5 @@ Number of selected atoms
 ----------       ---------    ---------    ---------    ---------    ---------
 There are .* atom  pairs and .* atom  exclusions
 IEEE_
+Using CUDA driver version
+Using CUDA runtime version
