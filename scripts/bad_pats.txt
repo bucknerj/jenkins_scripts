@@ -90,8 +90,8 @@ GB i ->
 \*\*\*\*\* ANORM or SNORM = 0, cannot compute angle between vectors
 Drude polarizability will be setup mass of Drudes particles
 CHARMM selection followed
-Constant tangential pressure and height
-Constant surface tension and  Constant volume
+Constant surface tension
+Constant volume
 lengthScale
 Init_context: Using OpenMM platform
 OpenMM: Velocities scaled or randomized
