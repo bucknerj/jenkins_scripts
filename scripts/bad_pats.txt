@@ -150,6 +150,7 @@ Constraints :
 Number of selected atoms
 ----------       ---------    ---------    ---------    ---------    ---------
 There are .* atom  pairs and .* atom  exclusions
+There are .* group pairs and .* group exclusions
 IEEE_
 Using CUDA driver version
 Using CUDA runtime version
