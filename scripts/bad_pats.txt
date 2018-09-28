@@ -92,6 +92,7 @@ Drude polarizability will be setup mass of Drudes particles
 CHARMM selection followed
 Constant surface tension
 Constant volume
+Constant tangential pressure
 lengthScale
 Init_context: Using OpenMM platform
 OpenMM: Velocities scaled or randomized
