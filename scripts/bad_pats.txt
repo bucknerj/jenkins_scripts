@@ -154,3 +154,4 @@ There are .* group pairs and .* group exclusions
 IEEE_
 Using CUDA driver version
 Using CUDA runtime version
+COLFFT thread division
