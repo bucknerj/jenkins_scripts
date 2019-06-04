@@ -26,7 +26,7 @@ if [[ "$1" == "--with-intel" ]]; then
 elif [[ "$1" == "--with-pgi" ]]; then
     ../charmm/configure -p ../inst $charmm_build_vars
 else
-    ../charmm/configure -p ../inst $charmm_build_vars -D CUDA_HOST_COMPILER=/usr/bin/g++
+    ../charmm/configure -p ../inst $charmm_build_vars
 fi
 make -j4 install
 popd
