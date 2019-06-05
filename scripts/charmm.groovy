@@ -29,7 +29,7 @@ builds.each {
         branch('master')
         remote {
           name('origin')
-          url('brooks:/export/git/charmm.git')
+          url('ssh://git@charmm-dev.org:65492/bucknerj/charmm')
           credentials('git')
         }
         extensions {
@@ -109,7 +109,7 @@ builds.each {
         branch('hanyang')
         remote {
           name('origin')
-          url('brooks:/export/git/charmm.git')
+          url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
           credentials('git')
         }
         extensions {
@@ -215,7 +215,7 @@ job("build-git-cmake-${current.name}") {
       branch('master')
       remote {
         name('origin')
-        url('brooks:/export/git/charmm.git')
+        url('ssh://git@charmm-dev.org:65492/bucknerj/charmm')
         credentials('git')
       }
       extensions {
