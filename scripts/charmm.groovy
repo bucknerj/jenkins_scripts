@@ -1,19 +1,19 @@
 def builds =
   [ [name:'lite', build:'gnu lite', test:'']
-  , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 16 em64t']
-  , [name:'gpu', build:'gnu M openmm domdec_gpu fftw', test:'M 2 X 16 gnu']
+  , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 2 em64t']
+  , [name:'gpu', build:'gnu M openmm domdec_gpu fftw', test:'M 2 X 2 gnu']
   , [ name:'repdstr'
     , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI'
-    , test:'M 2 X 16 gnu'
+    , test:'M 2 X 2 gnu'
     ]
   , [ name:'misc'
     , build:'gnu M +ABPO +ADUMBRXNCOR +ROLLRXNCOR +CORSOL +CVELOCI +PINS +ENSEMBLE +SAMC +MCMA +GSBP +PIPF +POLAR +PNM +RISM +CONSPH +RUSH +TMD +DIMS +MSCALE +EDS'
-    , test:'M 2 X 16 gnu'
+    , test:'M 2 X 2 gnu'
     ]
-  , [ name:'stringm', build:'gnu M stringm', test:'M 8 X 16 gnu' ]
+  , [ name:'stringm', build:'gnu M stringm', test:'M 8 X 2 gnu' ]
   , [ name:'misc2'
     , build:'gnu M g09 +DISTENE +MTS'
-    , test:'M 2 X 16 gnu'
+    , test:'M 2 X 2 gnu'
     ]
   , [ name:'tamd', build:'gnu +TAMD', test:'gnu' ]
   ];
@@ -187,10 +187,10 @@ def cmakeBuilds =
   , [ name: 'domdec_gpu'
     , description: 'domdec_gpu and openmm'
     , build: '-u --with-gcc --without-mkl'
-    , test: 'M 2 X 16 cmake'
+    , test: 'M 2 X 2 cmake'
     ]
-   , [name:'intel', build:'--with-intel', test:'M 2 X 16 cmake']
-   , [name:'pgi', build:'--with-pgi -u -D CUDA_HOST_COMPILER=/home/apps/pgi/2018/linux86-64/2018/bin/pgc++', test:'M 2 X 16 cmake']
+   , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
+   , [name:'pgi', build:'--with-pgi -u -D CUDA_HOST_COMPILER=/home/apps/pgi/2018/linux86-64/2018/bin/pgc++', test:'M 2 X 2 cmake']
   , [ name: 'mndo97'
     , description: 'MNDO97'
     , build: '-a MNDO97 -r QUANTUM,QCHEM --with-gcc --without-mkl'
