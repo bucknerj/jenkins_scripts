@@ -77,42 +77,44 @@ configs.each {
         publishers {
             mailer('bucknerj@umich.edu', true, true)
         }
-    } // end build jobs
+    } // end build job
 
-    job("test-biovia-${current.name}") {
-        displayName("test biovia ${current.name}")
-        description("configure ${current.build}\ntest ${current.test}")
-        multiscm {
-            git {
-                branch('master')
-                remote {
-                    name('origin')
-                    url('/opt/git/jenkins.git')
-                }
-                extensions {
-                    relativeTargetDirectory('config')
+    if (current.test) {
+        job("test-biovia-${current.name}") {
+            displayName("test biovia ${current.name}")
+            description("configure ${current.build}\ntest ${current.test}")
+            multiscm {
+                git {
+                    branch('master')
+                    remote {
+                        name('origin')
+                        url('/opt/git/jenkins.git')
+                    }
+                    extensions {
+                        relativeTargetDirectory('config')
+                    }
                 }
             }
-        }
-        triggers {
-            upstream("build biovia ${current.name}")
-        }
-        steps {
-            shell("/bin/bash config/scripts/test.bash ${current.test}")
-        }
-        publishers {
-            archiveXUnit {
-                jUnit {
-                    pattern('new/xml/c*test.xml')
-                }
-                skippedThresholds {
-                    failure(80)
-                    failureNew(80)
-                    unstable(50)
-                    unstableNew(50)
-                }
-                thresholdMode(ThresholdMode.PERCENT)
+            triggers {
+                upstream("build biovia ${current.name}")
             }
-        }
-    } // end test jobs
+            steps {
+                shell("/bin/bash config/scripts/test.bash ${current.test}")
+            }
+            publishers {
+                archiveXUnit {
+                    jUnit {
+                        pattern('new/xml/c*test.xml')
+                    }
+                    skippedThresholds {
+                        failure(80)
+                        failureNew(80)
+                        unstable(50)
+                        unstableNew(50)
+                    }
+                    thresholdMode(ThresholdMode.PERCENT)
+                }
+            }
+        } // end test job
+    }
 } // end configs loop
