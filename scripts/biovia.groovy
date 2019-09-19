@@ -96,7 +96,7 @@ configs.each {
                 }
             }
             triggers {
-                upstream("build biovia ${current.name}")
+                upstream("build-biovia-${current.name}")
             }
             steps {
                 shell("/bin/bash config/scripts/test.bash ${current.test}")
