@@ -19,7 +19,7 @@ fi
 rm -f inst
 ln -sf "$upstream_dir/inst" inst
 
-for i in $(seq 10 -1 1); do
+for i in $(seq 5 -1 1); do
     j=$((i+1))
     if [[ -e old.$i.tgz ]]; then
       cp old.$i.tgz old.$j.tgz
