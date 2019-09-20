@@ -1,6 +1,6 @@
 job('checkout-biovia') {
-  displayName("build biovia ${current.name}")
-  description("configure ${current.build}")
+  displayName('checkout biovia')
+  description('use git to checkout biovia from our gitlab server')
   multiscm {
     git {
       branch('master')
