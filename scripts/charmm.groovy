@@ -1,3 +1,24 @@
+job('checkout-charmm') {
+  displayName('checkout charmm')
+  description('use git to checkout charmm from our gitlab server')
+  multiscm {
+    git {
+      branch('master')
+      remote {
+        name('origin')
+        url('ssh://git@charmm-dev.org:65492/bucknerj/charmm')
+        credentials('git')
+      }
+    }
+  }
+  triggers {
+    scm('@daily')
+  }
+  publishers {
+    mailer('bucknerj@umich.edu', true, true)
+  }
+} // end checkout job
+
 def builds =
   [ [name:'lite', build:'gnu lite', test:'']
   , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 2 em64t']
@@ -29,17 +50,6 @@ builds.each {
         branch('master')
         remote {
           name('origin')
-          url('ssh://git@charmm-dev.org:65492/bucknerj/charmm')
-          credentials('git')
-        }
-        extensions {
-          relativeTargetDirectory('charmm')
-        }
-      }
-      git {
-        branch('master')
-        remote {
-          name('origin')
           url('/opt/git/jenkins.git')
         }
         extensions {
@@ -48,7 +58,7 @@ builds.each {
       }
     }
     triggers {
-      scm('@daily')
+      upstream('checkout-charmm')
     }
     steps {
       shell("/bin/bash -e config/scripts/build.bash ${current.build}")
@@ -99,23 +109,33 @@ builds.each {
 } // end build.each
 
 // hanyang svn builds
+job('checkout-dev') {
+  displayName('checkout dev')
+  description('use git to checkout the dev release from our gitlab server')
+  multiscm {
+    git {
+      branch('master')
+      remote {
+        name('origin')
+        url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
+        credentials('git')
+      }
+    }
+  }
+  triggers {
+    scm('@daily')
+  }
+  publishers {
+    mailer('bucknerj@umich.edu', true, true)
+  }
+} // end checkout job
+
 builds.each {
   def current = it
   job("build-svn-${current.name}") {
     displayName("build svn ${current.name}")
     description("install.com ${current.build} debug keepf nolog")
     multiscm {
-     git {
-        branch('hanyang')
-        remote {
-          name('origin')
-          url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
-          credentials('git')
-        }
-        extensions {
-          relativeTargetDirectory('charmm')
-        }
-      }
       git {
         branch('master')
         remote {
@@ -128,7 +148,7 @@ builds.each {
       }
     }
     triggers {
-      scm('@daily')
+      upstream('checkout-dev')
     }
     steps {
       shell("/bin/bash -e config/scripts/build.bash ${current.build}")
@@ -215,17 +235,6 @@ job("build-git-cmake-${current.name}") {
       branch('master')
       remote {
         name('origin')
-        url('ssh://git@charmm-dev.org:65492/bucknerj/charmm')
-        credentials('git')
-      }
-      extensions {
-        relativeTargetDirectory('charmm')
-      }
-    }
-    git {
-      branch('master')
-      remote {
-        name('origin')
         url('/opt/git/jenkins.git')
       }
       extensions {
@@ -234,7 +243,7 @@ job("build-git-cmake-${current.name}") {
     }
   }
   triggers {
-    scm('@daily')
+    upstream('checkout-charmm')
   }
   steps {
     shell("/bin/bash -e config/scripts/cmake_build.bash ${current.build}")

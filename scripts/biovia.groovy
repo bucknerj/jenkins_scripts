@@ -1,3 +1,24 @@
+job('checkout-biovia') {
+  displayName("build biovia ${current.name}")
+  description("configure ${current.build}")
+  multiscm {
+    git {
+      branch('master')
+      remote {
+        name('origin')
+        url('ssh://git@charmm-dev.org:65492/bucknerj/biovia')
+        credentials('git')
+      }
+    }
+  }
+  triggers {
+    scm('@daily')
+  }
+  publishers {
+    mailer('bucknerj@umich.edu', true, true)
+  }
+} // end checkout job
+
 def configs = [
     [name:'lite', build:'gnu lite', test:''],
 
@@ -50,17 +71,6 @@ configs.each {
                 branch('master')
                 remote {
                     name('origin')
-                    url('ssh://git@charmm-dev.org:65492/bucknerj/biovia')
-                    credentials('git')
-                }
-                extensions {
-                    relativeTargetDirectory('charmm')
-                }
-            }
-            git {
-                branch('master')
-                remote {
-                    name('origin')
                     url('/opt/git/jenkins.git')
                 }
                 extensions {
@@ -69,7 +79,7 @@ configs.each {
             }
         }
         triggers {
-            scm('@daily')
+          upstream('checkout-biovia')
         }
         steps {
             shell("/bin/bash -e config/scripts/cmake_build.bash ${current.build}")

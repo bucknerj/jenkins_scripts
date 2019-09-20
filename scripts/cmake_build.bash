@@ -1,5 +1,25 @@
 #!/bin/bash
 
+jenkins_jobs_dir=$(dirname "$WORKSPACE")
+this_job_name=$(basename "$WORKSPACE")
+build_type=${this_job_name:6:3}
+
+up_job_name=''
+
+if [[ "$build_type" == "git" ]]; then
+    up_job_name=checkout-charmm
+fi
+
+if [[ "$build_type" == "svn" ]]; then
+    up_job_name=checkout-dev
+fi
+
+if [[ "$build_type" == "bio" ]]; then
+    up_job_name=checkout-biovia
+fi
+
+upstream_dir=$jenkins_jobs_dir/$up_job_name
+
 charmm_build_vars=$*
 
 if [[ "$1" == "--with-intel" ]]; then
@@ -22,11 +42,11 @@ mkdir bld
 
 pushd bld
 if [[ "$1" == "--with-intel" ]]; then
-    ../charmm/configure -p ../inst $charmm_build_vars
+    "$upstream_dir"/configure -p ../inst $charmm_build_vars
 elif [[ "$1" == "--with-pgi" ]]; then
-    ../charmm/configure -p ../inst $charmm_build_vars
+    "$upstream_dir"/configure -p ../inst $charmm_build_vars
 else
-    ../charmm/configure -p ../inst $charmm_build_vars
+    "$upstream_dir"/configure -p ../inst $charmm_build_vars
 fi
 make -j4 install
 popd

@@ -1,13 +1,32 @@
 #!/bin/bash
 
-charmm_build_vars=$*
+jenkins_jobs_dir=$(dirname "$WORKSPACE")
+this_job_name=$(basename "$WORKSPACE")
+build_type=${this_job_name:6:3}
 
+up_job_name=''
+
+if [[ "$build_type" == "git" ]]; then
+    up_job_name=checkout-charmm
+fi
+
+if [[ "$build_type" == "svn" ]]; then
+    up_job_name=checkout-dev
+fi
+
+if [[ "$build_type" == "bio" ]]; then
+    up_job_name=checkout-biovia
+fi
+
+upstream_dir=$jenkins_jobs_dir/$up_job_name
+
+charmm_build_vars=$*
 . config/scripts/load_modules.bash $1
 
 if [[ -d inst ]]; then
-	rm -rf inst;
+    rm -rf inst;
 fi
-charmm/tool/NewCharmmTree inst
+"$upstream_dir"/tool/NewCharmmTree inst
 
 export MAKE_COMMAND='make -j4 '
 pushd inst
