@@ -7,10 +7,16 @@ job('build-gitlab-example') {
             remote {
                 name('origin')
                 url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
+                refspec('+refs/heads/*:refs/remotes/origin/* +refs/merge-requests/*/head:refs/remotes/origin/merge-requests/*')
+                branch("origin/${gitlabSourceBranch}")
                 credentials('git')
             }
             extensions {
                 relativeTargetDirectory('charmm')
+                mergeOptions {
+                  remote('origin')
+                  branch("${gitlabTargetBranch}")
+                }
             }
         }
         git {
@@ -25,13 +31,19 @@ job('build-gitlab-example') {
         }
     }
     triggers {
-        scm('@daily')
+      gitlabPush {
+        rebuildOpenMergeRequest('source')
+      }
     }
     steps {
         shell('/bin/bash -e config/scripts/cmake_build.bash -u --with-gcc --without-mkl')
     }
     publishers {
         mailer('bucknerj@umich.edu', true, true)
+        gitLabMessagePublisher
+        gitLabCommitStatusPublisher {
+          name('check-compiles')
+        }
     }
 } // end job build-gitlab-example
 
