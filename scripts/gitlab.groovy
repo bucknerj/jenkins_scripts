@@ -31,6 +31,9 @@ job('build-gitlab-example') {
         }
     }
     triggers {
+      gitlab {
+        triggerOnMergeRequest(true)
+      }
       gitlabPush {
         rebuildOpenMergeRequest('source')
       }
@@ -40,7 +43,7 @@ job('build-gitlab-example') {
     }
     publishers {
         mailer('bucknerj@umich.edu', true, true)
-        gitLabMessagePublisher
+        gitLabMessagePublisher { }
         gitLabCommitStatusPublisher {
           name('check-compiles')
         }
