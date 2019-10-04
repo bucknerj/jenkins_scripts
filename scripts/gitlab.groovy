@@ -46,6 +46,7 @@ job('build-gitlab-example') {
         gitLabMessagePublisher { }
         gitLabCommitStatusPublisher {
           name('check-compiles')
+          markUnstableAsSuccess(true)
         }
     }
 } // end job build-gitlab-example
