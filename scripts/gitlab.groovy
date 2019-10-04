@@ -8,14 +8,14 @@ job('build-gitlab-example') {
                 name('origin')
                 url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
                 refspec('+refs/heads/*:refs/remotes/origin/* +refs/merge-requests/*/head:refs/remotes/origin/merge-requests/*')
-                branch("origin/${gitlabSourceBranch}")
+                branch('origin/${gitlabSourceBranch}')
                 credentials('git')
             }
             extensions {
                 relativeTargetDirectory('charmm')
                 mergeOptions {
                   remote('origin')
-                  branch("${gitlabTargetBranch}")
+                  branch('${gitlabTargetBranch}')
                 }
             }
         }
