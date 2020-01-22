@@ -2,7 +2,11 @@
 
 jenkins_jobs_dir=$(dirname "$WORKSPACE")
 this_job_name=$(basename "$WORKSPACE")
-build_type=${this_job_name:6:3}
+if [[ $this_job_name == *stable* ]]; then
+    build_type=stable
+else
+    build_type=${this_job_name:6:3}
+fi
 
 up_job_name=''
 
@@ -16,6 +20,10 @@ fi
 
 if [[ "$build_type" == "bio" ]]; then
     up_job_name=checkout-biovia
+fi
+
+if [[ "$build_type" == "stable" ]]; then
+    up_job_name=checkout-stable
 fi
 
 upstream_dir=$jenkins_jobs_dir/$up_job_name
