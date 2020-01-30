@@ -49,12 +49,6 @@ fi
 mkdir bld
 
 pushd bld
-if [[ "$1" == "--with-intel" ]]; then
-    "$upstream_dir"/configure -p ../inst $charmm_build_vars
-elif [[ "$1" == "--with-pgi" ]]; then
-    "$upstream_dir"/configure -p ../inst $charmm_build_vars
-else
-    "$upstream_dir"/configure -p ../inst $charmm_build_vars
-fi
-make -j4 install
+"$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja
+ninja install
 popd

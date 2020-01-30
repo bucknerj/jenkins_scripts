@@ -2,6 +2,8 @@
 . /etc/profile.d/modules.sh
 
 module load cuda/system
+module load cmake
+module load ninja
 
 export FFTW_HOME=/usr
 
@@ -15,13 +17,13 @@ if [[ "$1" == "em64t" ]]; then
 elif [[ "$1" == "cmake" ]]; then
     echo "loading modules for gnu build"
     module load openmm/7.4
-    . /opt/rh/devtoolset-8/enable
     module load mpi/4.0-scl-8.3
+    . /opt/rh/devtoolset-8/enable
 elif [[ "$1" == "pgi" ]]; then
     echo "loading modules for pgi build"
-    . /opt/rh/devtoolset-7/enable
     module load openmm/7.2
     module load pgi/18.4
+    . /opt/rh/devtoolset-7/enable
 else
     echo "loading modules for unknown build"
     module load openmm/7.4
