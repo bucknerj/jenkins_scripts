@@ -4,6 +4,8 @@ jenkins_jobs_dir=$(dirname "$WORKSPACE")
 this_job_name=$(basename "$WORKSPACE")
 if [[ $this_job_name == *stable* ]]; then
     build_type=stable
+elif [[ $this_job_name == *free* ]]; then
+    build_type=free
 else
     build_type=${this_job_name:6:3}
 fi
@@ -24,6 +26,10 @@ fi
 
 if [[ "$build_type" == "stable" ]]; then
     up_job_name=checkout-stable
+fi
+
+if [[ "$build_type" == "free" ]]; then
+    up_job_name=checkout-free
 fi
 
 upstream_dir=$jenkins_jobs_dir/$up_job_name
