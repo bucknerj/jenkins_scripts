@@ -34,6 +34,7 @@ charmm_build_vars=$*
 
 echo "charmm build vars ${charmm_build_vars}"
 
+echo "begin loading modules..."
 if [[ "$1" == "--with-intel" ]]; then
   echo "an intel build"
   source config/scripts/load_modules.bash em64t
@@ -44,6 +45,7 @@ else
   echo "a gcc build"
   source config/scripts/load_modules.bash cmake
 fi
+echo "... finished loading modules"
 
 if [[ -d bld ]]; then
   echo "removing an old build dir"

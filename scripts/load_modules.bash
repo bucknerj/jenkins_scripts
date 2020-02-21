@@ -1,6 +1,10 @@
+echo "switch to scl python 3.6"
 source scl_source enable rh-python36
+
+echo "set up environment modules"
 source /etc/profile.d/modules.sh
 
+echo "load common set of modules"
 module load cuda/system
 module load cmake
 module load ninja
