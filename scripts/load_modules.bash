@@ -1,5 +1,5 @@
 echo "switch to scl python 3.6"
-source scl_source enable rh-python36
+source /usr/bin/scl_source enable rh-python36
 
 echo "set up environment modules"
 source /etc/profile.d/modules.sh
@@ -20,12 +20,12 @@ if [[ "$1" == "em64t" ]]; then
     module load mpi/3.0-intel-18
 elif [[ "$1" == "cmake" ]]; then
     echo "loading modules for GCC 9 build"
-    source scl_source enable devtoolset-9
+    source /usr/bin/scl_source enable devtoolset-9
     module load openmm/7.4
     module load mpi/4-scl-9
 elif [[ "$1" == "pgi" ]]; then
     echo "loading modules for pgi build"
-    source scl_source enable devtoolset-9
+    source /usr/bin/scl_source enable devtoolset-9
     module load openmm/7.2
     module load pgi/18.4
 else
