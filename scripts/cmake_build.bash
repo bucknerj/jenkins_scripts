@@ -10,51 +10,63 @@ else
     build_type=${this_job_name:6:3}
 fi
 
+echo "build type ${build_type}"
+
 up_job_name=''
 
 if [[ "$build_type" == "git" ]]; then
     up_job_name=checkout-charmm
-fi
-
-if [[ "$build_type" == "svn" ]]; then
+elif [[ "$build_type" == "svn" ]]; then
     up_job_name=checkout-dev
-fi
-
-if [[ "$build_type" == "bio" ]]; then
+elif [[ "$build_type" == "bio" ]]; then
     up_job_name=checkout-biovia
-fi
-
-if [[ "$build_type" == "stable" ]]; then
+elif [[ "$build_type" == "stable" ]]; then
     up_job_name=checkout-stable
-fi
-
-if [[ "$build_type" == "free" ]]; then
+elif [[ "$build_type" == "free" ]]; then
     up_job_name=checkout-free
 fi
+
+echo "upstream job name ${up_job_name}"
 
 upstream_dir=$jenkins_jobs_dir/$up_job_name
 
 charmm_build_vars=$*
 
+echo "charmm build vars ${charmm_build_vars}"
+
 if [[ "$1" == "--with-intel" ]]; then
-    . config/scripts/load_modules.bash em64t
+  echo "an intel build"
+  source config/scripts/load_modules.bash em64t
 elif [[ "$1" == "--with-pgi" ]]; then
-    . config/scripts/load_modules.bash pgi
+  echo "a pgi build"
+  source config/scripts/load_modules.bash pgi
 else
-    . config/scripts/load_modules.bash cmake
+  echo "a gcc build"
+  source config/scripts/load_modules.bash cmake
 fi
 
 if [[ -d bld ]]; then
-    rm -rf bld;
+  echo "removing an old build dir"
+  rm -rf bld;
 fi
 
 if [[ -d inst ]]; then
-    rm -rf inst;
+  echo "removing an old charmm install"
+  rm -rf inst;
 fi
 
+echo "making a new build dir"
 mkdir bld
 
+echo "switching to the new build dir"
 pushd bld
+
+echo "start configure script..."
 "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja
+echo "... configure script finished"
+
+echo "begin compile using ninja..."
 ninja install
+echo "... finished with ninja"
 popd
+echo "exited build directory"

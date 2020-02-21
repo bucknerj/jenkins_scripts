@@ -35,7 +35,7 @@ fi
 upstream_dir=$jenkins_jobs_dir/$up_job_name
 
 charmm_build_vars=$*
-. config/scripts/load_modules.bash $1
+source config/scripts/load_modules.bash $1
 
 if [[ -d inst ]]; then
     rm -rf inst;
