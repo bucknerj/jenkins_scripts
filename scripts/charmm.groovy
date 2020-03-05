@@ -206,7 +206,7 @@ def cmakeBuilds =
     ]
   , [ name: 'domdec_gpu'
     , description: 'domdec_gpu and openmm'
-    , build: '-u --with-gcc --without-mkl -D CUDA_HOST_COMPILER=/usr/bin/g++'
+    , build: '-u --with-gcc --without-mkl'
     , test: 'M 2 X 2 cmake'
     ]
    , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']

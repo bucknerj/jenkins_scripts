@@ -19,13 +19,13 @@ if [[ "$1" == "em64t" ]]; then
     module load intel/18.x
     module load mpi/3.0-intel-18
 elif [[ "$1" == "cmake" ]]; then
-    echo "loading modules for GCC 9 build"
-    source /opt/rh/devtoolset-9/enable
+    echo "loading modules for GCC 8 build"
+    source /opt/rh/devtoolset-8/enable
     module load openmm/7.4
-    module load mpi/4-scl-9
+    module load mpi/4.0-scl-8.3
 elif [[ "$1" == "pgi" ]]; then
     echo "loading modules for pgi build"
-    source /opt/rh/devtoolset-9/enable
+    source /opt/rh/devtoolset-8/enable
     module load openmm/7.2
     module load pgi/18.4
 else
