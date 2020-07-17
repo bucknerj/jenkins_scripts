@@ -31,8 +31,11 @@ def cmakeBuilds =
     , build:'-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS'
     , test:'M 2 X 2 cmake'
     ]
-  , [name:'misc2' , build:'--with-g09 -a DISTENE,MTS' , test:'M 2 X 2 cmake']
-  , [name:'tamd', build:'-a TAMD', test:'cmake']
+  , [ name:'misc2'
+    , build:'--without-domdec --with-g09 -a DISTENE,MTS'
+    , test:'M 2 X 2 cmake'
+    ]
+  , [name:'tamd', build:'--without-mpi -a TAMD', test:'cmake']
   , [name: 'mndo97', build: '--with-mndo97', test: 'cmake']
   , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
   , [name: 'squantm', build: '--with-squantm', test: 'cmake']
@@ -43,7 +46,7 @@ cmakeBuilds.each {
   def current = it
 // umich CMake build and test
 job("build-dev-${current.name}") {
-  displayName("build dev cmake ${current.name}")
+  displayName("build dev ${current.name}")
   description("${current.name}\n${current.build}\n${current.test}")
   multiscm {
     git {
