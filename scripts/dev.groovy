@@ -40,6 +40,7 @@ def cmakeBuilds =
   , [name: 'mndo97', build: '--with-mndo97', test: 'cmake']
   , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
   , [name: 'squantm', build: '--with-squantm', test: 'cmake']
+  , [ name:'pgi', build:'--with-pgi', test:'cmake' ]
   ];
 
 // umich dev builds

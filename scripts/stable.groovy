@@ -22,7 +22,8 @@ job('checkout-stable') {
 def builds =
   [ [name:'lite', build:'gnu lite', test:'']
   , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 2 em64t']
-  , [name:'gpu', build:'gnu M openmm domdec_gpu fftw', test:'M 2 X 2 gnu']
+  , [name:'openmm', build:'gnu M openmm fftw', test:'gnu']
+  , [name:'gpu', build:'gnu M domdec_gpu fftw', test:'M 2 X 2 gnu']
   , [ name:'repdstr'
     , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI'
     , test:'M 2 X 2 gnu'
@@ -109,27 +110,35 @@ builds.each {
 } // end build.each
 
 def cmakeBuilds =
-  [ [ name: 'openmm'
-    , description: 'openmm and sccdftb'
-    , build: '-s --with-gcc --without-mkl'
+  [ [ name: 'lite', build: '--lite -g', test: 'cmake' ]
+  , [ name: 'openmm'
+    , build: '--with-gcc --without-mkl'
     , test: 'cmake'
     ]
   , [ name: 'domdec_gpu'
-    , description: 'domdec_gpu and openmm'
     , build: '-u --with-gcc --without-mkl'
     , test: 'M 2 X 2 cmake'
     ]
-   , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
-   , [name:'pgi', build:'--with-pgi -u -D CUDA_HOST_COMPILER=/home/apps/pgi/2018/linux86-64/2018/bin/pgc++', test:'M 2 X 2 cmake']
+  , [ name:'intel', build:'--with-intel', test:'M 2 X 2 cmake' ]
+  , [ name:'pgi', build:'--with-pgi', test:'cmake' ]
+  , [ name:'sccdftb' , build:'--with-sccdftb' , test:'cmake' ]
+  , [ name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake' ]
+  , [ name: 'gamus', build: '--with-gamus' , test: 'cmake' ]
   , [ name: 'mndo97'
-    , description: 'MNDO97'
     , build: '-a MNDO97 -r QUANTUM,QCHEM --with-gcc --without-mkl'
     , test: 'cmake'
     ]
   , [ name: 'squantm'
-    , description: 'SQUANTM'
     , build: '-a SQUANTM -r QUANTUM,QCHEM,MNDO97 --with-gcc --without-mkl'
     , test: 'cmake'
+    ]
+  , [ name:'misc'
+    , build:'-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS'
+    , test:'M 2 X 2 cmake'
+    ]
+  , [ name:'misc2'
+    , build:'--without-domdec --with-g09 -a DISTENE,MTS'
+    , test:'M 2 X 2 cmake'
     ]
   ];
 
@@ -139,7 +148,7 @@ cmakeBuilds.each {
 // umich CMake build and test
 job("build-stable-cmake-${current.name}") {
   displayName("build stable cmake ${current.name}")
-  description("${current.description}\nconfigure ${current.build}")
+  description("${current.name}\nconfigure ${current.build}\ntest ${current.test}")
   multiscm {
     git {
       branch('master')
@@ -166,7 +175,7 @@ job("build-stable-cmake-${current.name}") {
 // begin stable CMake test job
 job("test-stable-cmake-${current.name}") {
   displayName("test stable cmake ${current.name}")
-  description("run the testcases for cmake\n${current.description}\nconfigure ${current.build}\ntest ${current.test}")
+  description("${current.name}\nconfigure ${current.build}\ntest ${current.test}")
   multiscm {
     git {
       branch('master')
