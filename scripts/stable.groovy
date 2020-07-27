@@ -22,7 +22,7 @@ job('checkout-stable') {
 def builds =
   [ [name:'lite', build:'gnu lite', test:'']
   , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 2 em64t']
-  , [name:'openmm', build:'gnu M openmm fftw', test:'gnu']
+  , [name:'openmm', build:'gnu openmm fftw', test:'gnu']
   , [name:'gpu', build:'gnu M domdec_gpu fftw', test:'M 2 X 2 gnu']
   , [ name:'repdstr'
     , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI'
