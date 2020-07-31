@@ -41,6 +41,7 @@ def cmakeBuilds =
   , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
   , [name: 'squantm', build: '--with-squantm', test: 'cmake']
   , [ name:'pgi', build:'--with-pgi', test:'cmake' ]
+  , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 
 // umich dev builds

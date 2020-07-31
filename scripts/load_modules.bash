@@ -25,9 +25,7 @@ elif [[ "$1" == "cmake" ]]; then
     module load mpi/4.0-scl-8.3
 elif [[ "$1" == "pgi" ]]; then
     echo "loading modules for pgi build"
-    source /opt/rh/devtoolset-8/enable
-    module load openmm/7.2
-    module load pgi/18.4
+    module load pgi/19.10
 else
     echo "loading modules for unknown build"
     module load openmm/7.4

@@ -140,6 +140,7 @@ def cmakeBuilds =
     , build:'--without-domdec --with-g09 -a DISTENE,MTS'
     , test:'M 2 X 2 cmake'
     ]
+  , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 
 // umich stable builds
