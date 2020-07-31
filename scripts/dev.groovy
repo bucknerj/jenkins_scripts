@@ -40,7 +40,7 @@ def cmakeBuilds =
   , [name: 'mndo97', build: '--with-mndo97', test: 'cmake']
   , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
   , [name: 'squantm', build: '--with-squantm', test: 'cmake']
-  , [ name:'pgi', build:'--with-pgi', test:'cmake' ]
+  , [ name:'pgi', build:'--with-pgi --without-openmm --without-mpi', test:'cmake' ]
   , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 

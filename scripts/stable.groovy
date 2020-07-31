@@ -120,7 +120,7 @@ def cmakeBuilds =
     , test: 'M 2 X 2 cmake'
     ]
   , [ name:'intel', build:'--with-intel', test:'M 2 X 2 cmake' ]
-  , [ name:'pgi', build:'--with-pgi', test:'cmake' ]
+  , [ name:'pgi', build:'--with-pgi --without-openmm --without-mpi', test:'cmake' ]
   , [ name:'sccdftb' , build:'--with-sccdftb' , test:'cmake' ]
   , [ name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake' ]
   , [ name: 'gamus', build: '--with-gamus' , test: 'cmake' ]
