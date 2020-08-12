@@ -22,9 +22,9 @@ job('checkout-free') {
 def builds =
   [ [name:'lite', build:'gnu lite', test:'']
   , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 2 em64t']
-  , [name:'gpu', build:'gnu M openmm domdec_gpu fftw', test:'M 2 X 2 gnu']
+  , [name:'openmm', build:'gnu openmm fftw', test:'gnu']
   , [ name:'repdstr'
-    , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI'
+    , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE'
     , test:'M 2 X 2 gnu'
     ]
   , [ name:'misc'
@@ -109,28 +109,24 @@ builds.each {
 } // end build.each
 
 def cmakeBuilds =
-  [ [ name: 'openmm'
-    , description: 'openmm and sccdftb'
-    , build: '-s --with-gcc --without-mkl'
+  [ [ name: 'lite', build: '--lite -g', test: 'cmake' ]
+  , [ name: 'openmm'
+    , build: '--with-gcc'
     , test: 'cmake'
     ]
-  , [ name: 'domdec_gpu'
-    , description: 'domdec_gpu and openmm'
-    , build: '-u --with-gcc --without-mkl'
-    , test: 'M 2 X 2 cmake'
+  , [ name:'intel', build:'--with-intel', test:'M 2 X 2 cmake' ]
+  , [ name:'pgi', build:'--with-pgi --without-openmm --without-mpi', test:'cmake' ]
+  , [ name:'sccdftb' , build:'--with-sccdftb' , test:'cmake' ]
+  , [ name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake' ]
+  , [ name: 'gamus', build: '--with-gamus' , test: 'cmake' ]
+  , [ name: 'mndo97' , build: '--with-mndo97' , test: 'cmake' ]
+  , [ name: 'squantm' , build: '--with-squantm' , test: 'cmake' ]
+  , [ name:'misc'
+    , build:'-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS'
+    , test:'M 2 X 2 cmake'
     ]
-   , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
-//   , [name:'pgi', build:'--with-pgi -u -D CUDA_HOST_COMPILER=/home/apps/pgi/2018/linux86-64/2018/bin/pgc++', test:'M 2 X 2 cmake']
-  , [ name: 'mndo97'
-    , description: 'MNDO97'
-    , build: '-a MNDO97 -r QUANTUM,QCHEM --with-gcc --without-mkl'
-    , test: 'cmake'
-    ]
-  , [ name: 'squantm'
-    , description: 'SQUANTM'
-    , build: '-a SQUANTM -r QUANTUM,QCHEM,MNDO97 --with-gcc --without-mkl'
-    , test: 'cmake'
-    ]
+  , [ name:'misc2' , build:'--with-g09 -a DISTENE,MTS' , test:'M 2 X 2 cmake' ]
+  , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 
 // umich free builds
@@ -139,7 +135,7 @@ cmakeBuilds.each {
 // umich CMake build and test
 job("build-free-cmake-${current.name}") {
   displayName("build free cmake ${current.name}")
-  description("${current.description}\nconfigure ${current.build}")
+  description("${current.name}\nconfigure ${current.build}\ntest ${current.test}")
   multiscm {
     git {
       branch('master')
@@ -166,7 +162,7 @@ job("build-free-cmake-${current.name}") {
 // begin free CMake test job
 job("test-free-cmake-${current.name}") {
   displayName("test free cmake ${current.name}")
-  description("run the testcases for cmake\n${current.description}\nconfigure ${current.build}\ntest ${current.test}")
+  description("${current.name}\nconfigure ${current.build}\ntest ${current.test}")
   multiscm {
     git {
       branch('master')
