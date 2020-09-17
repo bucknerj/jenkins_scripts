@@ -6,6 +6,8 @@ if [[ $this_job_name == *stable* ]]; then
     build_type=stable
 elif [[ $this_job_name == *free* ]]; then
     build_type=free
+elif [[ $this_job_name == *gcc* ]]; then
+    build_type=gcc
 else
     build_type=${this_job_name:6:3}
 fi
@@ -18,6 +20,8 @@ if [[ "$build_type" == "git" ]]; then
     up_job_name=checkout-charmm
 elif [[ "$build_type" == "dev" ]]; then
     up_job_name=checkout-dev
+elif [[ "$build_type" == "gcc" ]]; then
+    up_job_name=checkout-gcc
 elif [[ "$build_type" == "svn" ]]; then
     up_job_name=checkout-dev
 elif [[ "$build_type" == "bio" ]]; then
@@ -43,6 +47,9 @@ if [[ "$1" == "--with-intel" ]]; then
 elif [[ "$1" == "--with-pgi" ]]; then
   echo "a pgi build"
   source config/scripts/load_modules.bash pgi
+elif [[ "$build_type" == "gcc" ]]; then
+  echo "a gcc 10 build"
+  source config/scripts/gcc_modules.bash gcc
 else
   echo "a gcc build"
   source config/scripts/load_modules.bash cmake

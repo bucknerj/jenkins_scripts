@@ -13,11 +13,13 @@ elif [[ $this_job_name == *"cmake"* ]]; then
     job_type=cmake
 elif [[ $this_job_name == *"dev"* ]]; then
     job_type=cmake
+elif [[ $this_job_name == *"gcc"* ]]; then
+    job_type=gcc
 elif [[ $this_job_name == *"pgi"* ]]; then
     job_type=pgi
 fi
 
-. config/scripts/load_modules.bash $job_type
+. config/scripts/gcc_modules.bash $job_type
 
 rm -f inst
 ln -sf "$upstream_dir/inst" inst
@@ -50,7 +52,9 @@ fi
 
 pushd inst/test
 ln -sf "$WORKSPACE/output.xfail" output.xfail
-ln -sf "$WORKSPACE/old/output" bench
+
+dev_dir=$(echo "$WORKSPACE" | sed 's/-gcc-/-dev-/')
+ln -sf "$dev_dir/new/output" bench
 
 sed -e "s%@DIR@%../../config%" \
     "$WORKSPACE/config/data/sccdftb.dat" > sccdftb.dat
@@ -67,7 +71,7 @@ mkdir -p new/xml
   config/scripts/bad_pats.txt \
   output.xfail \
   inst/test \
-  old/output \
+  $dev_dir/new/output \
   inst/test/output \
   new/xml
 

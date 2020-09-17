@@ -23,6 +23,11 @@ elif [[ "$1" == "cmake" ]]; then
     source /opt/rh/devtoolset-8/enable
     module load openmm/7.4
     module load mpi/4.0-scl-8.3
+elif [[ "$1" == "gcc" ]]; then
+    echo "loading modules for GCC 10 build"
+    module load gcc/10
+    module load mpi/4-gcc-10
+    module load openmm/7.4
 elif [[ "$1" == "pgi" ]]; then
     echo "loading modules for pgi build"
     module load pgi/19.10
