@@ -75,7 +75,7 @@ pushd bld
 echo "start configure script..."
 "$upstream_dir"/configure -p ../inst $charmm_build_vars \
 	--with-ninja --with-gcc \
-	-D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++
+	-D CUDA_HOST_COMPILER=/usr/bin/g++
 echo "... configure script finished"
 
 echo "begin compile using ninja..."
