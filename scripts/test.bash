@@ -72,4 +72,7 @@ mkdir -p new/xml
   new/xml
 
 cp inst/test/output.* new
+rm inst/test/output.*
+
 cp inst/test/output/*.out new/output
+rm inst/test/output/*.out
