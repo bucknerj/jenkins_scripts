@@ -3,7 +3,8 @@ job('checkout-gcc') {
   description('use git to checkout the gcc 10 fix from our gitlab server')
   multiscm {
     git {
-      branch('gcc-10-fix')
+//      branch('gcc-10-fix')
+      branch('master')
       remote {
         name('origin')
         url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
