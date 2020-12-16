@@ -83,3 +83,8 @@ ninja install
 echo "... finished with ninja"
 popd
 echo "exited build directory"
+
+if [[ -d bld ]]; then
+  echo "removing the build dir"
+  rm -rf bld;
+fi
