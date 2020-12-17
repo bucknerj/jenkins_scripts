@@ -3,7 +3,6 @@ job('checkout-gcc') {
   description('use git to checkout the gcc 10 fix from our gitlab server')
   multiscm {
     git {
-//      branch('gcc-10-fix')
       branch('master')
       remote {
         name('origin')
@@ -52,7 +51,7 @@ job("build-gcc-${current.name}") {
   description("${current.name}\n${current.build}\n${current.test}")
   multiscm {
     git {
-      branch('gcc-10-fix')
+      branch('master')
       remote {
         name('origin')
         url('/opt/git/jenkins.git')
@@ -79,7 +78,7 @@ job("test-gcc-${current.name}") {
   description("${current.name}\n${current.build}\n${current.test}")
   multiscm {
     git {
-      branch('gcc-10-fix')
+      branch('master')
       remote {
         name('origin')
         url('/opt/git/jenkins.git')
