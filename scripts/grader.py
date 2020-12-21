@@ -218,7 +218,7 @@ def compare_files(to_remove, old_lines, new_lines):
 
 def decode_test_file(tar_path, test_name):
     with tarfile.open(tar_path, 'r:*') as tar:
-        with tar.extractfile('old/output/' + test_name + '.out') as file:
+        with tar.extractfile('results/output/' + test_name + '.out') as file:
             lines = file.readlines()
 
     lines = [line.decode('utf-8', errors='replace') for line in lines]
@@ -237,7 +237,7 @@ def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, test_name):
     test_report = grade_test(test_name, new_lines)
 
     report_lines = ''
-    fn = 'old/output/' + test_name + '.out'
+    fn = 'results/output/' + test_name + '.out'
     if test_report:
         test_report.time = test_time
     elif fn not in old_fns:

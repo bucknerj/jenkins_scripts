@@ -65,7 +65,7 @@ job("build-gcc-${current.name}") {
     upstream('checkout-gcc')
   }
   steps {
-    shell("/bin/bash -e config/scripts/gcc_build.bash ${current.build}")
+    shell("/bin/bash -e config/scripts/cmake_build.bash ${current.build}")
   }
   publishers {
     mailer('bucknerj@umich.edu', true, true)
@@ -92,7 +92,7 @@ job("test-gcc-${current.name}") {
     upstream("build-gcc-${current.name}")
   }
   steps {
-    shell("/bin/bash config/scripts/gcc_test.bash ${current.test}")
+    shell("/bin/bash config/scripts/test.bash ${current.test}")
   }
   publishers {
     archiveXUnit {

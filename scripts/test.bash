@@ -13,6 +13,8 @@ elif [[ $this_job_name == *"cmake"* ]]; then
     job_type=cmake
 elif [[ $this_job_name == *"dev"* ]]; then
     job_type=cmake
+elif [[ $this_job_name == *"gcc"* ]]; then
+    job_type=gcc
 elif [[ $this_job_name == *"pgi"* ]]; then
     job_type=pgi
 fi
@@ -30,23 +32,25 @@ for i in $(seq 5 -1 1); do
 done
 
 if [[ -e old ]]; then
-    tar czf old.tgz old
-    rm -rf old
+  cp -r old results
+  tar czf old.tgz results
+  rm -rf old results
 fi
 
 if [[ -f old.tgz ]]; then
   cp old.tgz old.1.tgz
-  rm old.tgz
+  rm -f old.tgz
 fi
 
 if [[ -e new ]]; then
-  tar czf new.tgz new
-  rm -rf new
+  cp -r new results
+  tar czf new.tgz results
+  rm -rf new results
 fi
 
 if [[ -f new.tgz ]]; then
   cp new.tgz old.tgz
-  rm -rf new.tgz
+  rm -f new.tgz
 fi
 
 rm -f inst/test/fort.*
@@ -56,7 +60,7 @@ rm -f inst/test/output.rpt
 rm -f inst/test/output/*.out
 
 if [ ! -f output.xfail ]; then
-    touch output.xfail
+  touch output.xfail
 fi
 
 pushd inst/test || exit
@@ -69,34 +73,46 @@ charmm_test_vars=$*
 ./test.com $charmm_test_vars output || true
 popd || exit
 
-mkdir -p new/output
+mkdir -p results/output
 
-cp inst/test/output.* new
+cp inst/test/output.* results
 rm inst/test/output.*
 
-cp inst/test/output/*.out new/output
+cp inst/test/output/*.out results/output
 rm inst/test/output/*.out
 
-tar czf new.tgz new
-rm -rf new
+tar czf new.tgz results
+rm -rf results
 
 if [[ -d xml ]]; then
   rm -rf xml
 fi
 mkdir xml
 
-/opt/rh/rh-python36/root/usr/bin/python \
-  config/scripts/grader.py \
-  config/scripts/bad_pats.txt \
-  output.xfail \
-  inst/test \
-  old.tgz \
-  new.tgz \
-  xml
+if [[ $job_type == gcc ]]; then
+    dev_dir=${WORKSPACE//-gcc-/-dev-}
+    /opt/rh/rh-python36/root/usr/bin/python \
+	config/scripts/grader.py \
+	config/scripts/bad_pats.txt \
+	output.xfail \
+	inst/test \
+	$dev_dir/new.tgz \
+	new.tgz \
+	xml
+else
+    /opt/rh/rh-python36/root/usr/bin/python \
+	config/scripts/grader.py \
+	config/scripts/bad_pats.txt \
+	output.xfail \
+	inst/test \
+	old.tgz \
+	new.tgz \
+	xml
+fi
 
-mkdir -p new/xml
-cp xml/*.xml new/xml/
-tar rzf new.tgz new/xml
-rm -rf new
+mkdir -p results/xml
+cp xml/*.xml results/xml/
+tar rzf new.tgz results/xml
+rm -rf results
 
 
