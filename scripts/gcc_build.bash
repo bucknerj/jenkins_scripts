@@ -70,7 +70,7 @@ echo "making a new build dir"
 mkdir bld
 
 echo "switching to the new build dir"
-pushd bld
+pushd bld || exit
 
 echo "start configure script..."
 "$upstream_dir"/configure -p ../inst $charmm_build_vars \
@@ -81,7 +81,7 @@ echo "... configure script finished"
 echo "begin compile using ninja..."
 ninja install
 echo "... finished with ninja"
-popd
+popd || exit
 echo "exited build directory"
 
 if [[ -d bld ]]; then

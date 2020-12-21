@@ -43,6 +43,6 @@ fi
 "$upstream_dir"/tool/NewCharmmTree inst
 
 export MAKE_COMMAND='make -j4 '
-pushd inst
+pushd inst || exit
 ./install.com $charmm_build_vars keepf nolog
-popd
+popd || exit

@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 
-import concurrent.futures
 import difflib
-import functools
 import itertools
 import os
 import os.path
 import re
-import subprocess
 import sys
-import tempfile
-import xml.etree.ElementTree as etree
+import tarfile
+import xml.etree.ElementTree as EltTree
+
 
 class TestResult:
-    def __init__(self, name, passed = False, error = False, failed = False, skipped = False, reason = '', time = 0.0):
+    def __init__(self, name, passed=False, error=False, failed=False, skipped=False, reason='', time=0.0):
         self.name = name
         self.passed = passed
         self.error = error
@@ -23,26 +21,18 @@ class TestResult:
         self.time = time
 
     def toxml(self):
-        result = 'error'
-        if self.failed:
-            result = 'fail'
-        if self.skipped:
-            result = 'skip'
-        elif self.passed:
-            result = 'pass'
-
-        xml = etree.Element('testcase', name = self.name)
+        xml = EltTree.Element('testcase', name=self.name)
 
         if self.skipped and self.reason:
-            skip_child = etree.Element('skipped')
+            skip_child = EltTree.Element('skipped')
             skip_child.text = self.reason
             xml.append(skip_child)
         elif self.failed and self.reason:
-            fail_child = etree.Element('failure')
+            fail_child = EltTree.Element('failure')
             fail_child.text = self.reason
             xml.append(fail_child)
         elif self.error and self.reason:
-            error_child = etree.Element('error')
+            error_child = EltTree.Element('error')
             error_child.text = self.reason
             xml.append(error_child)
 
@@ -50,97 +40,109 @@ class TestResult:
         return xml
 
     def tostring(self):
-        return (etree
-                .tostring(self.toxml(), pretty_print = True)
-                .decode(errors = 'replace'))
+        return (EltTree
+                .tostring(self.toxml())
+                .decode(errors='replace'))
 
-def any_in(repats, line):
+
+def any_in(pats, line):
     return any(True for _ in
-               itertools.dropwhile(lambda repat: not repat.search(line), repats))
+               itertools.dropwhile(lambda pat: not pat.search(line), pats))
+
 
 def is_junk_line(to_remove, line):
     return any_in(to_remove, line)
 
-def is_skip_line(l):
+
+def is_skip_line(current_line):
     skip_line = False
-    if ((not 'echo' in l.casefold())
-        and (not l.strip().startswith('!'))
-        and ('test not performed' in l.casefold())):
+    if (('echo' not in current_line.casefold())
+            and (not current_line.strip().startswith('!'))
+            and ('test not performed' in current_line.casefold())):
         skip_line = True
 
     return skip_line
 
+
 def is_test_skipped(test_lines):
-    skip_lines = [l for l in test_lines if is_skip_line(l)]
+    skip_lines = [line for line in test_lines if is_skip_line(line)]
     if skip_lines:
         skip_lines = '\n'.join(skip_lines)
     else:
         skip_lines = ''
     return skip_lines
 
-def is_error_line(l):
+
+def is_error_line(line):
     error_line = ''
-    test_line = l.strip().casefold()
-    if ((not 'echo' in test_line)
-        and (not test_line.startswith('!'))
-        and ('abnormal termination' in test_line)):
-        error_line = l
+    test_line = line.strip().casefold()
+    if (('echo' not in test_line)
+            and (not test_line.startswith('!'))
+            and ('abnormal termination' in test_line)):
+        error_line = line
 
     return error_line
 
-def is_normal_stop(l):
+
+def is_normal_stop(line):
     end_line = ''
-    test_line = l.strip().casefold()
+    test_line = line.strip().casefold()
     if test_line.startswith('normal termination'):
-        end_line = l
+        end_line = line
 
     return end_line
 
+
 def is_test_error(test_lines):
-    error_list = [l for l in test_lines if is_error_line(l)]
+    error_list = [line for line in test_lines if is_error_line(line)]
     error_lines = '\n'.join(error_list)
 
     stop_list = []
     if not error_lines:
-        stop_list = [l for l in test_lines if is_normal_stop(l)]
+        stop_list = [line for line in test_lines if is_normal_stop(line)]
 
     if not error_lines and not stop_list:
         error_lines = 'no termination'
 
     return error_lines
 
-def is_fail_line(l):
+
+def is_fail_line(line):
     fail_line = ''
-    if ((not 'echo' in l.casefold())
-        and (not l.strip().startswith('!'))
-        and ('testcase result: fail' in l.casefold())):
-        fail_line = l.strip()
+    if (('echo' not in line.casefold())
+            and (not line.strip().startswith('!'))
+            and ('testcase result: fail' in line.casefold())):
+        fail_line = line.strip()
 
     return fail_line
 
+
 def is_test_failed(test_lines):
-    fail_list = [l for l in test_lines if is_fail_line(l)]
+    fail_list = [line for line in test_lines if is_fail_line(line)]
     fail_lines = '\n'.join(fail_list)
     return fail_lines
 
-def is_pass_line(l):
+
+def is_pass_line(line):
     pass_line = False
-    test_line = l.strip().casefold()
-    if ((not 'echo' in test_line)
-        and (not test_line.startswith('!'))
-        and ('testcase result: pass' in test_line)):
+    test_line = line.strip().casefold()
+    if (('echo' not in test_line)
+            and (not test_line.startswith('!'))
+            and ('testcase result: pass' in test_line)):
         pass_line = True
 
     return pass_line
 
+
 def is_test_passed(test_lines):
-    pass_list = [l for l in test_lines if is_pass_line(l)]
+    pass_list = [line for line in test_lines if is_pass_line(line)]
     pass_lines = '\n'.join(pass_list)
     return pass_lines
 
+
 def filter_test(to_remove, lines):
     # delete junk lines
-    f_lines = [l for l in lines if not is_junk_line(to_remove, l)]
+    f_lines = [line for line in lines if not is_junk_line(to_remove, line)]
 
     # make substitutions
     # s/ \./0\./g
@@ -148,27 +150,26 @@ def filter_test(to_remove, lines):
     # s/ +\./+0\./g
     # s/  *ISEED =  *1$//
 
-    subs = [(' \.', '0.'),
-            (' -\.', '-0.'),
-            (' +\.', '+0.'),
-            ('  *ISEED =  *1$', '')]
-    subs_comp = [(re.compile(pat), repl) for pat, repl in subs]
-    for pat, repl in subs_comp:
-        f_lines = [re.sub(pat, repl, l) for l in f_lines]
+    subs = [(r' \.', '0.'),
+            (r' -\.', '-0.'),
+            (r' +\.', '+0.'),
+            (r'  *ISEED =  *1$', '')]
+    subs_comp = [(re.compile(pat), put) for pat, put in subs]
+    for pat, put in subs_comp:
+        f_lines = [re.sub(pat, put, line) for line in f_lines]
 
     # delete blank lines
-    f_lines = [l for l in f_lines if l.strip()]
+    f_lines = [line for line in f_lines if line.strip()]
 
     # remove negative zeros: -0.00 -> 0.00, -0 -> 0, -0.05 -> -0.05
-    pat = re.compile('-(0\.?0*(\s|$))')
-    repl = r' \1'
-    f_lines = [re.sub(pat, repl, l) for l in f_lines]
+    pat = re.compile(r'-(0\.?0*(\s|$))')
+    put = r' \1'
+    f_lines = [re.sub(pat, put, line) for line in f_lines]
 
     return f_lines
 
-def get_test_time(test_lines):
-    test_time = 0.0
 
+def get_test_time(test_lines):
     try:
         test_time_line = test_lines[-2].split()
         test_time = test_time_line[2]
@@ -181,6 +182,7 @@ def get_test_time(test_lines):
         test_time = 0.0
 
     return test_time
+
 
 def grade_test(test_name, test_lines):
     test_result = None
@@ -195,15 +197,16 @@ def grade_test(test_name, test_lines):
         skip_check = is_test_skipped(test_lines)
 
     if error_check:
-        test_result = TestResult(test_name, error = True, reason = error_check)
+        test_result = TestResult(test_name, error=True, reason=error_check)
     elif fail_check:
-        test_result = TestResult(test_name, failed = True, reason = fail_check)
+        test_result = TestResult(test_name, failed=True, reason=fail_check)
     elif skip_check:
-        test_result = TestResult(test_name, skipped = True, reason = skip_check)
+        test_result = TestResult(test_name, skipped=True, reason=skip_check)
     elif is_test_passed(test_lines):
-        test_result = TestResult(test_name, passed = True)
+        test_result = TestResult(test_name, passed=True)
 
     return test_result
+
 
 def compare_files(to_remove, old_lines, new_lines):
     old_clean = filter_test(to_remove, old_lines)
@@ -212,79 +215,84 @@ def compare_files(to_remove, old_lines, new_lines):
     diff = difflib.context_diff(old_clean, new_clean, 'old', 'new')
     return list(itertools.islice(diff, 30))
 
-def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, new_fn):
 
-    with open(os.path.join(new_dir, new_fn), errors = 'replace') as new_file:
-        new_lines = new_file.readlines()
+def decode_test_file(tar_path, test_name):
+    with tarfile.open(tar_path, 'r:*') as tar:
+        with tar.extractfile('old/output/' + test_name + '.out') as file:
+            lines = file.readlines()
 
-    test_name = os.path.basename(new_fn).split('.')[0]
+    lines = [line.decode('utf-8', errors='replace') for line in lines]
+    return lines
+
+
+def process_test(to_remove, to_skip, old_dir, old_fns, new_dir, test_name):
+    new_lines = decode_test_file(new_dir, test_name)
     test_time = get_test_time(new_lines)
-
     if any(map(lambda x: x == test_name, to_skip)):
         return TestResult(test_name,
-                          skipped = True,
-                          reason = 'test intentionally not graded (see output.xfail)',
-                          time = test_time)
+                          skipped=True,
+                          reason='test intentionally not graded (see output.xfail)',
+                          time=test_time)
 
     test_report = grade_test(test_name, new_lines)
 
-
     report_lines = ''
+    fn = 'old/output/' + test_name + '.out'
     if test_report:
         test_report.time = test_time
-    elif not (new_fn in old_fns):
+    elif fn not in old_fns:
         test_report = TestResult(test_name,
-                                 failed = True,
-                                 reason = 'NEW TEST',
-                                 time = test_time)
+                                 failed=True,
+                                 reason='NEW TEST',
+                                 time=test_time)
     else:
-        with open(os.path.join(old_dir, new_fn), errors = 'replace') as old_file:
-            old_lines = old_file.readlines()
-
+        old_lines = decode_test_file(old_dir, test_name)
         report_lines = compare_files(to_remove, old_lines, new_lines)
         report_lines = ''.join(report_lines)
 
     if report_lines:
         test_report = TestResult(test_name,
-                                 failed = True,
-                                 reason = report_lines,
-                                 time = test_time)
+                                 failed=True,
+                                 reason=report_lines,
+                                 time=test_time)
     elif not test_report:
         test_report = TestResult(test_name,
-                                 passed = True,
-                                 time = test_time)
+                                 passed=True,
+                                 time=test_time)
 
     return test_report
+
 
 def print_results(xml_dir, test_batches, results):
     for batch_name in sorted(test_batches.keys()):
         batch = [t for t in sorted(test_batches[batch_name])
                  if t in results]
 
-        ntests = len(batch)
-        nerrors = len([t for t in batch if results[t].error])
-        nfailures = len([t for t in batch if results[t].failed])
-        nskipped = len([t for t in batch if results[t].skipped])
+        n_tests = len(batch)
+        n_errors = len([t for t in batch if results[t].error])
+        n_failures = len([t for t in batch if results[t].failed])
+        n_skipped = len([t for t in batch if results[t].skipped])
         time = sum([results[t].time for t in batch])
 
-        suite = etree.Element('testsuite',
-                              name = batch_name,
-                              tests = str(ntests),
-                              errors = str(nerrors),
-                              failures = str(nfailures),
-                              skipped = str(nskipped),
-                              time = '{0:.3f}'.format(time))
+        suite = EltTree.Element('testsuite',
+                                name=batch_name,
+                                tests=str(n_tests),
+                                errors=str(n_errors),
+                                failures=str(n_failures),
+                                skipped=str(n_skipped),
+                                time='{0:.3f}'.format(time))
 
         for t in batch:
             suite.append(results[t].toxml())
 
-        tree = etree.ElementTree(suite)
+        tree = EltTree.ElementTree(suite)
         output_filename = os.path.join(xml_dir, batch_name + '.xml')
         with open(output_filename, 'w') as output_file:
             tree.write(output_file,
-                       encoding = 'unicode',
-                       xml_declaration = True,
-                       short_empty_elements = False)
+                       encoding='unicode',
+                       xml_declaration=True,
+                       short_empty_elements=False)
+
 
 def main():
     if len(sys.argv) < 7:
@@ -303,51 +311,39 @@ def main():
     new_dir = sys.argv[5]
     xml_dir = sys.argv[6]
 
-    new_fns = [fn for fn in os.listdir(new_dir)
-                    if os.path.isfile(os.path.join(new_dir, fn))
-                    and fn.endswith(".out")]
-    old_fns = [fn for fn in os.listdir(old_dir)
-                    if os.path.isfile(os.path.join(old_dir, fn))
-                    and fn.endswith(".out")]
+    with tarfile.open(new_dir, 'r:*') as new_tar:
+        new_fns = [fn for fn in new_tar.getnames() if fn.endswith('.out')]
 
-    to_remove = []
+    with tarfile.open(old_dir, 'r:*') as old_tar:
+        old_fns = [fn for fn in old_tar.getnames() if fn.endswith('.out')]
+
     with open(to_remove_fn) as to_remove_f:
-        to_remove.extend([re.compile(l.strip()) for l in to_remove_f
-                          if l.strip() and not l.startswith('#')])
+        to_remove = [re.compile(line.strip()) for line in to_remove_f
+                     if line.strip() and not line.startswith('#')]
 
-    to_skip = []
     with open(to_skip_fn) as to_skip_f:
-        to_skip.extend([l.strip() for l in to_skip_f
-                          if l.strip() and not l.startswith('#')])
+        to_skip = [line.strip() for line in to_skip_f
+                   if line.strip() and not line.startswith('#')]
 
-    test_to_file = dict()
-    for new_fn in new_fns:
-        test_name = os.path.basename(new_fn).split('.')[0]
-        test_to_file[test_name] = new_fn
-
-    results = []
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = zip(test_to_file.keys(),
-                      executor.map(functools.partial(process_test,
-                                           to_remove, to_skip,
-                                           old_dir, old_fns,
-                                           new_dir),
-                                   test_to_file.values()))
-
+    test_names = [os.path.basename(fn[:-4]) for fn in new_fns]
+    test_results = [process_test(to_remove, to_skip, old_dir, old_fns, new_dir, name) for name in test_names]
     test_dirs = [d for d in os.listdir(test_home)
                  if os.path.isdir(os.path.join(test_home, d))
                  and re.match(r'c\d{2}test', d)]
 
     test_batches = dict()
-    for dir in test_dirs:
-        full_path = os.path.join(test_home, dir)
-        test_batches[dir] = [os.path.basename(fn).split('.')[0]
-                             for fn in os.listdir(full_path)
-                             if os.path.isfile(os.path.join(full_path, fn))
-                             and fn.endswith('.inp')]
+    for current_dir in test_dirs:
+        full_path = os.path.join(test_home, current_dir)
+        test_batches[current_dir] = [os.path.basename(fn)[:-4]
+                                     for fn in os.listdir(full_path)
+                                     if os.path.isfile(os.path.join(full_path,
+                                                                    fn))
+                                     and fn.endswith('.inp')]
 
+    results = zip(test_names, test_results)
     print_results(xml_dir, test_batches, dict(results))
     sys.exit(0)
+
 
 if __name__ == '__main__':
     main()

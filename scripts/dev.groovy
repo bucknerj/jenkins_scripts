@@ -99,7 +99,7 @@ job("test-dev-${current.name}") {
   publishers {
     archiveXUnit {
       jUnit {
-          pattern('new/xml/c*test.xml')
+          pattern('xml/c*test.xml')
       }
       skippedThresholds {
         failure(80)
