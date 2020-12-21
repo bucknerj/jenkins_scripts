@@ -110,9 +110,3 @@ else
 	xml
 fi
 
-mkdir -p results/xml
-cp xml/*.xml results/xml/
-tar rzf new.tgz results/xml
-rm -rf results
-
-
