@@ -92,3 +92,7 @@ if [[ -d bld ]]; then
   echo "removing the build dir"
   rm -rf bld;
 fi
+
+if [[ -d config ]]; then
+  rm -rf config
+fi

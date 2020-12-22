@@ -46,3 +46,8 @@ export MAKE_COMMAND='make -j4 '
 pushd inst || exit
 ./install.com $charmm_build_vars keepf nolog
 popd || exit
+
+if [[ -d config ]]; then
+  rm -rf config
+fi
+

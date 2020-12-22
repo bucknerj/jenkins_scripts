@@ -110,3 +110,6 @@ else
 	xml
 fi
 
+if [[ -d config ]]; then
+  rm -rf config
+fi
