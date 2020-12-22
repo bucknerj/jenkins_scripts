@@ -78,16 +78,16 @@ operation not performed
 random clcg
 reference distance
 ISEED =
-\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+******************************************
 BOMLEV .* IS NOT REACHED
-\*\*\*\*\* LEVEL  1 WARNING FROM <GTNBCT> \*\*\*\*\*
-\*\*\*\*\* CUTNB and CTOFNB are too close for efficient heuristic update
-\*\*\*\*\* CUTNB,CTOFNB,CTONNB are not in correct order
+LEVEL  1 WARNING FROM <GTNBCT>
+CUTNB and CTOFNB are too close for efficient heuristic update
+CUTNB,CTOFNB,CTONNB are not in correct order
 DELTIC:
-\*\*\*\*\* LEVEL  0 WARNING FROM <CLIMAG> \*\*\*\*\*
+LEVEL  0 WARNING FROM <CLIMAG>
 GB i ->
-\*\*\*\*\* LEVEL  1 WARNING FROM <VANGLD> \*\*\*\*\*
-\*\*\*\*\* ANORM or SNORM = 0, cannot compute angle between vectors
+LEVEL  1 WARNING FROM <VANGLD>
+ANORM or SNORM = 0, cannot compute angle between vectors
 Drude polarizability will be setup mass of Drudes particles
 CHARMM selection followed
 Constant surface tension
@@ -96,8 +96,7 @@ Constant tangential pressure
 lengthScale
 Init_context: Using OpenMM platform
 OpenMM: Velocities scaled or randomized
-^1$
-\*\*\*\*\* PSF modified with image centering active: Now off
+PSF modified with image centering active: Now off
 1st Helix :
 SELRPN>
 DRIFT
@@ -108,10 +107,8 @@ FLUC EWALD>
 MINI
 DYNA XTLE>
 DYNA PRESS>
-C00. has
 residues were included
 RANDSPEC> seeds
-test_.* OK
 RDCMND
 Evaluating:
 ERROR in DISPOS
@@ -129,8 +126,8 @@ EPS    =
 NBXMOD =
 WARNING FROM
 XNSYMM is zero: build crystal
-BOMLEV .* IS NOT REACHED
-<GEO> RMAX: second selection .* done
+IS NOT REACHED
+<GEO> RMAX: second selection
 Harmonic constraint, keep inside the maximum radius
 MMFP> WARNING: ANGLE/DIHEDRAL SAWO
 Sphere constraint
@@ -149,8 +146,8 @@ CONSTRAINTS RESETED
 Constraints :
 Number of selected atoms
 ----------       ---------    ---------    ---------    ---------    ---------
-There are .* atom  pairs and .* atom  exclusions
-There are .* group pairs and .* group exclusions
+atom  exclusions
+group exclusions
 IEEE_
 Using CUDA driver version
 Using CUDA runtime version

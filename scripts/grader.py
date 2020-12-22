@@ -51,17 +51,17 @@ def any_in(pats, line):
 
 
 def is_junk_line(to_remove, line):
-    return any_in(to_remove, line)
+    for bad in to_remove:
+        if bad in line:
+            return True
+
+    return False
 
 
 def is_skip_line(current_line):
-    skip_line = False
-    if (('echo' not in current_line.casefold())
+    return (('echo' not in current_line.casefold())
             and (not current_line.strip().startswith('!'))
-            and ('test not performed' in current_line.casefold())):
-        skip_line = True
-
-    return skip_line
+            and ('test not performed' in current_line.casefold()))
 
 
 def is_test_skipped(test_lines):
@@ -318,7 +318,7 @@ def main():
         old_fns = [fn for fn in old_tar.getnames() if fn.endswith('.out')]
 
     with open(to_remove_fn) as to_remove_f:
-        to_remove = [re.compile(line.strip()) for line in to_remove_f
+        to_remove = [line.strip() for line in to_remove_f
                      if line.strip() and not line.startswith('#')]
 
     with open(to_skip_fn) as to_skip_f:
