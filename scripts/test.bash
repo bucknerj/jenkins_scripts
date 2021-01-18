@@ -66,8 +66,7 @@ fi
 pushd inst/test || exit
 ln -sf "$WORKSPACE/output.xfail" output.xfail
 
-sed -e "s%@DIR@%$WORKSPACE/config%" \
-    "$WORKSPACE/config/data/sccdftb.dat" > sccdftb.dat
+ln -sf '/opt/jenkins_data/sccdftb.dat' sccdftb.dat
 
 charmm_test_vars=$*
 ./test.com $charmm_test_vars output || true
