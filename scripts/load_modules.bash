@@ -15,24 +15,24 @@ echo "build type |$1|"
 
 if [[ "$1" == "em64t" ]]; then
     echo "loading modules for Intel 18 build"
-    module load openmm/7.4
+    module load openmm/7.5
     module load intel/18.x
     module load mpi/3.0-intel-18
 elif [[ "$1" == "cmake" ]]; then
     echo "loading modules for GCC 8 build"
     source /opt/rh/devtoolset-8/enable
-    module load openmm/7.4
+    module load openmm/7.5
     module load mpi/4.0-scl-8.3
 elif [[ "$1" == "gcc" ]]; then
     echo "loading modules for GCC 10 build"
     module load gcc/10
     module load mpi/4-gcc-10
-    module load openmm/7.4
+    module load openmm/7.5
 elif [[ "$1" == "pgi" ]]; then
     echo "loading modules for pgi build"
     module load pgi/19.10
 else
     echo "loading modules for unknown build"
-    module load openmm/7.4
+    module load openmm/7.5
     module load mpi/1.10.5
 fi
