@@ -18,7 +18,7 @@ if [[ "$1" == "em64t" ]]; then
     source /opt/rh/devtoolset-8/enable
     module load intel/18.x
     module load mpi/3.0-intel-18
-    module load openmm/7.4
+    module load openmm/7.5
 elif [[ "$1" == "cmake" ]]; then
     echo "loading modules for GCC 8 build"
     source /opt/rh/devtoolset-8/enable
