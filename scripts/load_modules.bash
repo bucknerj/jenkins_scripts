@@ -14,7 +14,7 @@ export FFTW_HOME=/usr
 echo "build type |$1|"
 
 if [[ "$1" == "em64t" ]]; then
-    echo "loading modules for Intel 18 build"
+    echo "loading modules for Intel oneAPI build"
     source /opt/rh/devtoolset-8/enable
     source /opt/intel/oneapi/setvars.sh
     module load openmm/7.5

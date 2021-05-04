@@ -1,5 +1,6 @@
 #!/bin/bash
 
+charmm_test_vars=$*
 jenkins_jobs_dir=$(dirname "$WORKSPACE")
 this_job_name=$(basename "$WORKSPACE")
 up_job_name=${this_job_name//test/build}
@@ -68,7 +69,6 @@ ln -sf "$WORKSPACE/output.xfail" output.xfail
 
 ln -sf '/opt/jenkins_data/sccdftb.dat' sccdftb.dat
 
-charmm_test_vars=$*
 ./test.com $charmm_test_vars output || true
 popd || exit
 
