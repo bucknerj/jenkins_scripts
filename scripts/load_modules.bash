@@ -7,7 +7,7 @@ source /etc/profile.d/modules.sh
 echo "load common set of modules"
 module load cuda/system
 module load cmake
-module load ninja
+module load ninja/1.8.2
 
 export FFTW_HOME=/usr
 
