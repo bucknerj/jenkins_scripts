@@ -75,8 +75,8 @@ pushd bld || exit
 echo "start configure script..."
 if [[ "$build_type" == "gcc" ]]; then
   "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja \
-        --with-gcc \
-	-D CUDA_HOST_COMPILER=/usr/bin/g++
+        --with-gcc
+#	-D CUDA_HOST_COMPILER=/usr/bin/g++
 else
   "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja
 fi
