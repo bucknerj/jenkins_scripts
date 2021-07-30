@@ -21,8 +21,8 @@ job('checkout-dev') {
 
 def cmakeBuilds =
   [ [name: 'lite', build: '--lite -g', test: 'cmake']
-  , [name: 'openmm', build: '', test: 'cmake']
-  , [name: 'domdec_gpu', build: '-u --with-gcc', test: 'M 2 X 2 cmake']
+  , [name: 'openmm', build: '--with-fftdock', test: 'cmake']
+  , [name: 'domdec_gpu', build: '-u --with-gcc --with-fftdock', test: 'M 2 X 2 cmake']
   , [name: 'blade', build: '-u --with-blade --with-gcc', test: 'cmake']
   , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
   , [name:'sccdftb' , build:'--with-sccdftb' , test:'cmake']
