@@ -112,11 +112,11 @@ builds.each {
 def cmakeBuilds =
   [ [ name: 'lite', build: '--lite -g', test: 'cmake' ]
   , [ name: 'openmm'
-    , build: '--with-gcc --without-mkl'
+    , build: '--with-gcc --without-mkl --with-fftdock'
     , test: 'cmake'
     ]
   , [ name: 'domdec_gpu'
-    , build: '-u --with-gcc --without-mkl'
+    , build: '-u --with-gcc --without-mkl --with-fftdock'
     , test: 'M 2 X 2 cmake'
     ]
   , [ name:'intel', build:'--with-intel', test:'M 2 X 2 cmake' ]
@@ -125,7 +125,7 @@ def cmakeBuilds =
   , [ name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake' ]
   , [ name: 'gamus', build: '--with-gamus' , test: 'cmake' ]
   , [ name: 'mndo97'
-    , build: '-a MNDO97 -r QUANTUM,QCHEM --with-gcc --without-mkl'
+    , build: '--with-mndo97 --with-gcc --without-mkl'
     , test: 'cmake'
     ]
   , [ name: 'squantm'
