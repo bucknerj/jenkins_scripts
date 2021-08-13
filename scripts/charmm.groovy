@@ -19,208 +19,29 @@ job('checkout-charmm') {
   }
 } // end checkout job
 
-def builds =
-  [ [name:'lite', build:'gnu lite', test:'']
-  , [name:'intel', build:'em64t M openmm mkl', test:'M 2 X 2 em64t']
-  , [name:'gpu', build:'gnu M openmm domdec_gpu fftw', test:'M 2 X 2 gnu']
-  , [ name:'repdstr'
-    , build:'gnu M +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI'
-    , test:'M 2 X 2 gnu'
-    ]
-  , [ name:'misc'
-    , build:'gnu M +ABPO +ADUMBRXNCOR +ROLLRXNCOR +CORSOL +CVELOCI +PINS +ENSEMBLE +SAMC +MCMA +GSBP +PIPF +POLAR +PNM +RISM +CONSPH +RUSH +TMD +DIMS +MSCALE +EDS'
-    , test:'M 2 X 2 gnu'
-    ]
-  , [ name:'stringm', build:'gnu M stringm', test:'M 8 X 2 gnu' ]
-  , [ name:'misc2'
-    , build:'gnu M g09 +DISTENE +MTS'
-    , test:'M 2 X 2 gnu'
-    ]
-  , [ name:'tamd', build:'gnu +TAMD', test:'gnu' ]
-  ];
-
-// umich git builds
-builds.each {
-  def current = it
-  job("build-git-${current.name}") {
-    displayName("build git ${current.name}")
-    description("install.com ${current.build} debug keepf nolog")
-    multiscm {
-      git {
-        branch('master')
-        remote {
-          name('origin')
-          url('/opt/git/jenkins.git')
-        }
-        extensions {
-          relativeTargetDirectory('config')
-        }
-      }
-    }
-    triggers {
-      upstream('checkout-charmm')
-    }
-    steps {
-      shell("/bin/bash -e config/scripts/build.bash ${current.build}")
-    }
-    publishers {
-      mailer('bucknerj@umich.edu', true, true)
-    }
-  } // end git build job
-
-  if (current.test) {
-    job("test-git-${current.name}") {
-      displayName("test git ${current.name}")
-      description("run the testcases for the git ${current.name} build")
-      multiscm {
-        git {
-          branch('master')
-          remote {
-            name('origin')
-            url('/opt/git/jenkins.git')
-          }
-          extensions {
-            relativeTargetDirectory('config')
-          }
-        }
-      }
-      triggers {
-        upstream("build-git-${current.name}")
-      }
-      steps {
-        shell("/bin/bash config/scripts/test.bash ${current.test}")
-      }
-      publishers {
-        archiveXUnit {
-          jUnit {
-            pattern('xml/c*test.xml')
-          }
-          skippedThresholds {
-            failure(80)
-            failureNew(80)
-            unstable(50)
-            unstableNew(50)
-          }
-          thresholdMode(ThresholdMode.PERCENT)
-        }
-      }
-    } // end git test job
-  } // end if current.test
-} // end build.each
-
-// hanyang svn builds
-job('checkout-dev') {
-  displayName('checkout dev')
-  description('use git to checkout the dev release from our gitlab server')
-  multiscm {
-    git {
-      branch('master')
-      remote {
-        name('origin')
-        url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
-        credentials('git')
-      }
-    }
-  }
-  triggers {
-    scm('@daily')
-  }
-  publishers {
-    mailer('bucknerj@umich.edu', true, true)
-  }
-} // end checkout job
-
-builds.each {
-  def current = it
-  job("build-svn-${current.name}") {
-    displayName("build svn ${current.name}")
-    description("install.com ${current.build} debug keepf nolog")
-    multiscm {
-      git {
-        branch('master')
-        remote {
-          name('origin')
-          url('/opt/git/jenkins.git')
-        }
-        extensions {
-          relativeTargetDirectory('config')
-        }
-      }
-    }
-    triggers {
-      upstream('checkout-dev')
-    }
-    steps {
-      shell("/bin/bash -e config/scripts/build.bash ${current.build}")
-    }
-    publishers {
-      mailer('bucknerj@umich.edu', true, true)
-    }
-  } // end svn build
-
-  if (current.test) {
-    job("test-svn-${current.name}") {
-      displayName("test svn ${current.name}")
-      description("run the testcases for the svn ${current.name} build")
-      multiscm {
-        git {
-          branch('master')
-          remote {
-            name('origin')
-            url('/opt/git/jenkins.git')
-          }
-          extensions {
-            relativeTargetDirectory('config')
-          }
-        }
-      }
-      triggers {
-        upstream("build-svn-${current.name}")
-      }
-      steps {
-        shell("/bin/bash config/scripts/test.bash ${current.test}")
-      }
-      publishers {
-        archiveXUnit {
-          jUnit {
-            pattern('xml/c*test.xml')
-          }
-          skippedThresholds {
-            failure(80)
-            failureNew(80)
-            unstable(50)
-            unstableNew(50)
-          }
-          thresholdMode(ThresholdMode.PERCENT)
-        }
-      }
-    }  // end svn test
-  } // end if current.test
-} // end svn job configurations
-
 def cmakeBuilds =
-  [ [ name: 'openmm'
-    , description: 'openmm and sccdftb'
-    , build: '-s --with-gcc --without-mkl'
-    , test: 'cmake'
+  [ [name: 'lite', build: '--lite -g', test: 'cmake']
+  , [name: 'openmm', build: '--with-fftdock', test: 'cmake']
+  , [name: 'domdec_gpu', build: '-u --with-gcc --with-fftdock', test: 'M 2 X 2 cmake']
+  , [name: 'blade', build: '-u --with-blade --with-gcc', test: 'cmake']
+  , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
+  , [name:'sccdftb' , build:'--with-sccdftb' , test:'cmake']
+  , [name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake']
+  , [name:'stringm', build:'--with-stringm', test:'M 8 X 2 cmake']
+  , [ name:'misc'
+    , build:'-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS'
+    , test:'M 2 X 2 cmake'
     ]
-  , [ name: 'domdec_gpu'
-    , description: 'domdec_gpu and openmm'
-    , build: '-u --with-gcc --without-mkl'
-    , test: 'M 2 X 2 cmake'
+  , [ name:'misc2'
+    , build:'--without-domdec --with-g09 -a DISTENE,MTS'
+    , test:'M 2 X 2 cmake'
     ]
-   , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
-   , [name:'pgi', build:'--with-pgi -u -D CUDA_HOST_COMPILER=/home/apps/pgi/2018/linux86-64/2018/bin/pgc++', test:'M 2 X 2 cmake']
-  , [ name: 'mndo97'
-    , description: 'MNDO97'
-    , build: '-a MNDO97 -r QUANTUM,QCHEM --with-gcc --without-mkl'
-    , test: 'cmake'
-    ]
-  , [ name: 'squantm'
-    , description: 'SQUANTM'
-    , build: '-a SQUANTM -r QUANTUM,QCHEM,MNDO97 --with-gcc --without-mkl'
-    , test: 'cmake'
-    ]
+  , [name:'tamd', build:'--without-mpi -a TAMD', test:'cmake']
+  , [name: 'mndo97', build: '--with-mndo97', test: 'cmake']
+  , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
+  , [name: 'squantm', build: '--with-squantm', test: 'cmake']
+  , [ name:'pgi', build:'--with-pgi --without-openmm --without-mpi', test:'cmake' ]
+  , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 
 // umich git builds

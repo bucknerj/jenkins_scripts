@@ -21,25 +21,27 @@ job('checkout-gcc') {
 
 def cmakeBuilds =
   [ [name: 'lite', build: '--lite -g', test: 'cmake']
-  , [name: 'openmm', build: '', test: 'cmake']
-  , [name: 'domdec_gpu', build: '-u --with-gcc', test: 'M 2 X 2 cmake']
+  , [name: 'openmm', build: '--with-fftdock', test: 'cmake']
+  , [name: 'domdec_gpu', build: '-u --with-gcc --with-fftdock', test: 'M 2 X 2 cmake']
   , [name: 'blade', build: '-u --with-blade --with-gcc', test: 'cmake']
-  , [name: 'sccdftb' , build:'--with-sccdftb' , test:'cmake']
-  , [name: 'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake']
-  , [name: 'stringm', build:'--with-stringm', test:'M 8 X 2 cmake']
-  , [ name: 'misc'
-    , build: '-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS'
-    , test: 'M 2 X 2 cmake'
+  , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
+  , [name:'sccdftb' , build:'--with-sccdftb' , test:'cmake']
+  , [name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake']
+  , [name:'stringm', build:'--with-stringm', test:'M 8 X 2 cmake']
+  , [ name:'misc'
+    , build:'-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS'
+    , test:'M 2 X 2 cmake'
     ]
-  , [ name: 'misc2'
-    , build: '--without-domdec --with-g09 -a DISTENE,MTS'
-    , test: 'M 2 X 2 cmake'
+  , [ name:'misc2'
+    , build:'--without-domdec --with-g09 -a DISTENE,MTS'
+    , test:'M 2 X 2 cmake'
     ]
-  , [name: 'tamd', build:'--without-mpi -a TAMD', test:'cmake']
+  , [name:'tamd', build:'--without-mpi -a TAMD', test:'cmake']
   , [name: 'mndo97', build: '--with-mndo97', test: 'cmake']
   , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
   , [name: 'squantm', build: '--with-squantm', test: 'cmake']
-  , [name: 'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
+  , [ name:'pgi', build:'--with-pgi --without-openmm --without-mpi', test:'cmake' ]
+  , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 
 // umich gcc builds
