@@ -18,6 +18,8 @@ up_job_name=''
 
 if [[ "$build_type" == "git" ]]; then
     up_job_name=checkout-charmm
+elif [[ "$build_type" == "ber" ]]; then
+    up_job_name=checkout-ber
 elif [[ "$build_type" == "dev" ]]; then
     up_job_name=checkout-dev
 elif [[ "$build_type" == "gcc" ]]; then

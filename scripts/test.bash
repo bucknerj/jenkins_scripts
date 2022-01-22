@@ -10,6 +10,8 @@ upstream_dir=$jenkins_jobs_dir/$up_job_name
 job_type=gnu
 if [[ $this_job_name == *"intel"* ]]; then
     job_type=em64t  
+elif [[ $this_job_name == *"ber"* ]]; then
+    job_type=cmake
 elif [[ $this_job_name == *"cmake"* ]]; then
     job_type=cmake
 elif [[ $this_job_name == *"dev"* ]]; then
