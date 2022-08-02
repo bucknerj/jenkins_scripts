@@ -3,10 +3,10 @@ job('checkout-stable') {
   description('use git to checkout stable from our gitlab server')
   multiscm {
     git {
-      branch('master')
+      branch('stable-release')
       remote {
         name('origin')
-        url('ssh://git@charmm-dev.org:65492/bucknerj/stable-release')
+        url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
         credentials('git')
       }
     }
