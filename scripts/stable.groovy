@@ -21,7 +21,7 @@ job('checkout-stable') {
 
 def cmakeBuilds =
   [ [ name: 'lite', build: '--lite -g', test: 'cmake' ]
-  , [ name: 'blade', build: --with-blade --with-gcc', test: 'cmake']
+  , [ name: 'blade', build: '--with-blade --with-gcc', test: 'cmake']
   , [ name: 'openmm'
     , build: '--with-gcc --without-mkl --with-fftdock'
     , test: 'cmake'
