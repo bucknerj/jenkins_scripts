@@ -15,6 +15,7 @@ echo "build type |$1|"
 
 if [[ "$1" == "em64t" ]]; then
     echo "loading modules for Intel build"
+    source /opt/rh/devtoolset-11/enable
     module use /opt/intel/oneapi/modulefiles
     module load /opt/intel/oneapi/modulefiles/compiler/latest
     module load /opt/intel/oneapi/modulefiles/mpi/latest
