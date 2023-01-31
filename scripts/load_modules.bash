@@ -14,9 +14,10 @@ export FFTW_HOME=/usr
 echo "build type |$1|"
 
 if [[ "$1" == "em64t" ]]; then
-    echo "loading modules for Intel 18 build"
-    module load intel/18.x
-    module load mpi/3.0-intel-18
+    echo "loading modules for Intel build"
+    module use /opt/intel/oneapi/modulefiles
+    module load /opt/intel/oneapi/modulefiles/compiler/latest
+    module load /opt/intel/oneapi/modulefiles/mpi/latest
     module load openmm/7.4
 elif [[ "$1" == "cmake" ]]; then
     echo "loading modules for GCC 8 build"
