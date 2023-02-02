@@ -15,10 +15,8 @@ echo "build type |$1|"
 
 if [[ "$1" == "em64t" ]]; then
     echo "loading modules for Intel build"
-    source /opt/rh/devtoolset-11/enable
-    module use /opt/intel/oneapi/modulefiles
-    module load /opt/intel/oneapi/modulefiles/compiler/latest
-    module load /opt/intel/oneapi/modulefiles/mpi/latest
+    source /opt/intel/oneapi/setvars.sh
+    module load intel/2021.4
     module load openmm/7.4
 elif [[ "$1" == "cmake" ]]; then
     echo "loading modules for GCC 8 build"
