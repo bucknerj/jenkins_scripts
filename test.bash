@@ -22,7 +22,7 @@ elif [[ $this_job_name == *"pgi"* ]]; then
     job_type=pgi
 fi
 
-. config/scripts/load_modules.bash $job_type
+. scripts/load_modules.bash $job_type
 
 rm -f inst
 ln -sf "$upstream_dir/inst" inst
@@ -93,24 +93,24 @@ mkdir xml
 if [[ $job_type == gcc ]]; then
     dev_dir=${WORKSPACE//-gcc-/-dev-}
     /usr/bin/python \
-	config/scripts/grader.py \
-	config/scripts/bad_pats.txt \
-	output.xfail \
-	inst/test \
-	$dev_dir/new.tgz \
-	new.tgz \
-	xml
+        scripts/grader.py \
+        scripts/bad_pats.txt \
+        output.xfail \
+        inst/test \
+        $dev_dir/new.tgz \
+        new.tgz \
+        xml
 else
     /usr/bin/python \
-	config/scripts/grader.py \
-	config/scripts/bad_pats.txt \
-	output.xfail \
-	inst/test \
-	old.tgz \
-	new.tgz \
-	xml
+        scripts/grader.py \
+        scripts/bad_pats.txt \
+        output.xfail \
+        inst/test \
+        old.tgz \
+        new.tgz \
+        xml
 fi
 
-if [[ -d config ]]; then
-  rm -rf config
+if [[ -d scripts ]]; then
+  rm -rf scripts
 fi
