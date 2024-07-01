@@ -9,7 +9,7 @@ upstream_dir=$jenkins_jobs_dir/$up_job_name
 
 job_type=gnu
 if [[ $this_job_name == *"intel"* ]]; then
-    job_type=em64t  
+    job_type=em64t
 elif [[ $this_job_name == *"ber"* ]]; then
     job_type=cmake
 elif [[ $this_job_name == *"cmake"* ]]; then
@@ -69,7 +69,7 @@ fi
 pushd inst/test || exit
 ln -sf "$WORKSPACE/output.xfail" output.xfail
 
-ln -sf '/opt/jenkins_data/sccdftb.dat' sccdftb.dat
+ln -sf '/home/bucknerj/src/jenkins/sccdftb_data/sccdftb.dat' sccdftb.dat
 
 ./test.com $charmm_test_vars output || true
 popd || exit
@@ -92,7 +92,7 @@ mkdir xml
 
 if [[ $job_type == gcc ]]; then
     dev_dir=${WORKSPACE//-gcc-/-dev-}
-    /opt/rh/rh-python36/root/usr/bin/python \
+    /usr/bin/python \
 	config/scripts/grader.py \
 	config/scripts/bad_pats.txt \
 	output.xfail \
@@ -101,7 +101,7 @@ if [[ $job_type == gcc ]]; then
 	new.tgz \
 	xml
 else
-    /opt/rh/rh-python36/root/usr/bin/python \
+    /usr/bin/python \
 	config/scripts/grader.py \
 	config/scripts/bad_pats.txt \
 	output.xfail \

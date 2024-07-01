@@ -43,7 +43,7 @@ charmm_build_vars=$*
 echo "charmm build vars ${charmm_build_vars}"
 
 echo "begin loading modules..."
-if [[ "$1" == "--with-intel" ]]; then
+if [[ "$1" == *intel* ]]; then
   echo "an intel build"
   source config/scripts/load_modules.bash em64t
 elif [[ "$1" == "--with-pgi" ]]; then
@@ -79,6 +79,9 @@ if [[ "$build_type" == "gcc" ]]; then
   "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja \
         --with-gcc
 #	-D CUDA_HOST_COMPILER=/usr/bin/g++
+elif [[ "$build_type" == *cmake* ]]; then
+    "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja \
+                   -D CUDA_HOST_COMPILER=/usr/bin/g++
 else
   "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja
 fi

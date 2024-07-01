@@ -7,7 +7,6 @@ job('checkout-dev') {
       remote {
         name('origin')
         url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
-        credentials('git')
       }
     }
   }
@@ -24,7 +23,7 @@ def cmakeBuilds =
   , [name: 'openmm', build: '--with-fftdock', test: 'cmake']
   , [name: 'domdec_gpu', build: '-u --with-gcc --with-fftdock', test: 'M 2 X 2 cmake']
   , [name: 'blade', build: '-u --with-blade --with-gcc', test: 'cmake']
-  , [name:'intel', build:'--with-intel', test:'M 2 X 2 cmake']
+  , [name:'intel', build:'-D intel', test:'M 2 X 2 cmake']
   , [name:'sccdftb' , build:'--with-sccdftb' , test:'cmake']
   , [name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake']
   , [name:'stringm', build:'--with-stringm', test:'M 8 X 2 cmake']
@@ -40,7 +39,6 @@ def cmakeBuilds =
   , [name: 'mndo97', build: '--with-mndo97', test: 'cmake']
   , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
   , [name: 'squantm', build: '--with-squantm', test: 'cmake']
-  , [ name:'pgi', build:'--with-pgi --without-openmm --without-mpi', test:'cmake' ]
   , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 
@@ -56,10 +54,10 @@ job("build-dev-${current.name}") {
       branch('master')
       remote {
         name('origin')
-        url('/opt/git/jenkins.git')
+        url('/home/bucknerj/src/jenkins/scripts')
       }
       extensions {
-        relativeTargetDirectory('config')
+        relativeTargetDirectory('scripts')
       }
     }
   }
@@ -67,7 +65,7 @@ job("build-dev-${current.name}") {
     upstream('checkout-dev')
   }
   steps {
-    shell("/bin/bash -e config/scripts/cmake_build.bash ${current.build}")
+    shell("/bin/bash -e scripts/cmake_build.bash ${current.build}")
   }
   publishers {
     mailer('bucknerj@umich.edu', true, true)
@@ -83,10 +81,10 @@ job("test-dev-${current.name}") {
       branch('master')
       remote {
         name('origin')
-        url('/opt/git/jenkins.git')
+        url('/home/bucknerj/src/jenkins/scripts')
       }
       extensions {
-        relativeTargetDirectory('config')
+        relativeTargetDirectory('scripts')
       }
     }
   }
@@ -94,7 +92,7 @@ job("test-dev-${current.name}") {
     upstream("build-dev-${current.name}")
   }
   steps {
-    shell("/bin/bash config/scripts/test.bash ${current.test}")
+    shell("/bin/bash scripts/test.bash ${current.test}")
   }
   publishers {
     archiveXUnit {
