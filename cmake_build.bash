@@ -43,7 +43,7 @@ charmm_build_vars=$*
 echo "charmm build vars ${charmm_build_vars}"
 
 echo "begin loading modules..."
-if [[ "$1" == *intel* ]]; then
+if [[ "$this_job_name" == *intel* ]]; then
   echo "an intel build"
   source scripts/load_modules.bash em64t
 elif [[ "$1" == "--with-pgi" ]]; then

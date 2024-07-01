@@ -24,7 +24,7 @@ if [[ "$1" == "em64t" ]]; then
 #    module load openmm/7.4
 elif [[ "$1" == "cmake" ]]; then
     echo "preparing for GCC build"
-    conda activate dev
+    export OPENMM_HOME=/home/bucknerj/apps/openmm/8.1.1
 #    source /opt/rh/devtoolset-8/enable
 #    module load openmm/7.5
 # elif [[ "$1" == "gcc" ]]; then
