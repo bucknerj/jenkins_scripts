@@ -50,15 +50,8 @@ echo "switching to the new build dir"
 pushd bld || exit
 
 echo "start configure script..."
-if [[ "$build_type" == "gcc" ]]; then
-  "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja \
-        --with-gcc
-elif [[ "$build_type" == *cmake* ]]; then
-    "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja \
+"$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja \
                    -D CUDA_HOST_COMPILER=/usr/bin/g++
-else
-  "$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja
-fi
 echo "... configure script finished"
 
 echo "begin compile using ninja..."
