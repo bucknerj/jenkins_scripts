@@ -7,19 +7,9 @@ up_job_name=${this_job_name//test/build}
 
 upstream_dir=$jenkins_jobs_dir/$up_job_name
 
-job_type=gnu
+job_type=gcc
 if [[ $this_job_name == *"intel"* ]]; then
-    job_type=em64t
-elif [[ $this_job_name == *"ber"* ]]; then
-    job_type=cmake
-elif [[ $this_job_name == *"cmake"* ]]; then
-    job_type=cmake
-elif [[ $this_job_name == *"dev"* ]]; then
-    job_type=cmake
-elif [[ $this_job_name == *"gcc"* ]]; then
-    job_type=gcc
-elif [[ $this_job_name == *"pgi"* ]]; then
-    job_type=pgi
+    job_type=intel
 fi
 
 . scripts/load_modules.bash $job_type
@@ -90,26 +80,14 @@ if [[ -d xml ]]; then
 fi
 mkdir xml
 
-if [[ $job_type == gcc ]]; then
-    dev_dir=${WORKSPACE//-gcc-/-dev-}
-    /usr/bin/python \
-        scripts/grader.py \
-        scripts/bad_pats.txt \
-        output.xfail \
-        inst/test \
-        $dev_dir/new.tgz \
-        new.tgz \
-        xml
-else
-    /usr/bin/python \
-        scripts/grader.py \
-        scripts/bad_pats.txt \
-        output.xfail \
-        inst/test \
-        old.tgz \
-        new.tgz \
-        xml
-fi
+/usr/bin/python \
+    scripts/grader.py \
+    scripts/bad_pats.txt \
+    output.xfail \
+    inst/test \
+    old.tgz \
+    new.tgz \
+    xml
 
 if [[ -d scripts ]]; then
   rm -rf scripts
