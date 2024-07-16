@@ -11,33 +11,33 @@
 
 # export FFTW_HOME=/usr
 
-echo "handle environment for"
-echo "  build type |$1|"
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/bucknerj/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/bucknerj/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/bucknerj/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/bucknerj/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
-if [[ "$1" == "em64t" ]]; then
+echo "configure environment for build type |$1|"
+
+if [[ "$1" == "intel" ]]; then
     echo "preparing for Intel build"
     source /opt/intel/oneapi/setvars.sh
     export CC=$(which icx)
     export CXX=$(which icx)
     export FC=$(which ifx)
-#    module load intel/2021.4
-#    module load openmm/7.4
-elif [[ "$1" == "cmake" ]]; then
+elif [[ "$1" == "gcc" ]]; then
     echo "preparing for GCC build"
-    export OPENMM_HOME=/home/bucknerj/apps/openmm/8.1.1
-#    source /opt/rh/devtoolset-8/enable
-#    module load openmm/7.5
-# elif [[ "$1" == "gcc" ]]; then
-#     echo "loading modules for GCC 10 build"
-#     module load gcc/10
-#     module load mpi/4-gcc-10
-#     module load openmm/7.5
-# elif [[ "$1" == "pgi" ]]; then
-#     echo "loading modules for pgi build"
-#     module load pgi/19.10
+    conda activate dev
 else
-    # echo "loading modules for unknown build"
-    # module load openmm/7.5
-    # module load mpi/1.10.5
-    echo "unknown build; doing nothing"
+    echo "ERROR: unknown build; doing nothing"
+    exit 1
 fi
