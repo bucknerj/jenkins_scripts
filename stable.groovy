@@ -7,7 +7,6 @@ job('checkout-stable') {
       remote {
         name('origin')
         url('ssh://git@charmm-dev.org:65492/bucknerj/dev-release')
-        credentials('git')
       }
     }
   }
@@ -20,29 +19,14 @@ job('checkout-stable') {
 } // end checkout job
 
 def cmakeBuilds =
-  [ [ name: 'lite', build: '--lite -g', test: 'cmake' ]
-  , [ name: 'blade', build: '--with-blade --with-gcc', test: 'cmake']
-  , [ name: 'openmm'
-    , build: '--with-gcc --without-mkl --with-fftdock'
-    , test: 'cmake'
-    ]
-  , [ name: 'domdec_gpu'
-    , build: '-u --with-gcc --without-mkl --with-fftdock'
-    , test: 'M 2 X 2 cmake'
-    ]
-  , [ name:'intel', build:'--with-intel', test:'M 2 X 2 cmake' ]
-  , [ name:'pgi', build:'--with-pgi --without-openmm --without-mpi', test:'cmake' ]
-  , [ name:'sccdftb' , build:'--with-sccdftb' , test:'cmake' ]
-  , [ name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake' ]
-  , [ name: 'gamus', build: '--with-gamus' , test: 'cmake' ]
-  , [ name: 'mndo97'
-    , build: '--with-mndo97 --with-gcc --without-mkl'
-    , test: 'cmake'
-    ]
-  , [ name: 'squantm'
-    , build: '-a SQUANTM -r QUANTUM,QCHEM,MNDO97 --with-gcc --without-mkl'
-    , test: 'cmake'
-    ]
+  [ [name: 'lite', build: '--lite -g', test: 'cmake']
+  , [name: 'openmm', build: '--with-fftdock', test: 'cmake']
+  , [name: 'domdec_gpu', build: '-u --with-gcc --with-fftdock', test: 'M 2 X 2 cmake']
+  , [name: 'blade', build: '-u --with-blade --with-gcc', test: 'cmake']
+  , [name:'intel', build:'', test:'M 2 X 2 cmake']
+  , [name:'sccdftb' , build:'--with-sccdftb' , test:'cmake']
+  , [name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake']
+  , [name:'stringm', build:'--with-stringm', test:'M 8 X 2 cmake']
   , [ name:'misc'
     , build:'-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS'
     , test:'M 2 X 2 cmake'
@@ -51,6 +35,10 @@ def cmakeBuilds =
     , build:'--without-domdec --with-g09 -a DISTENE,MTS'
     , test:'M 2 X 2 cmake'
     ]
+  , [name:'tamd', build:'--without-mpi -a TAMD', test:'cmake']
+  , [name: 'mndo97', build: '--with-mndo97', test: 'cmake']
+  , [name: 'gamus', build: '--with-gamus' , test: 'cmake']
+  , [name: 'squantm', build: '--with-squantm', test: 'cmake']
   , [ name:'ljpme', build:'--with-ljpme', test:'M 2 X 2 cmake' ]
   ];
 
@@ -58,18 +46,18 @@ def cmakeBuilds =
 cmakeBuilds.each {
   def current = it
 // umich CMake build and test
-job("build-stable-cmake-${current.name}") {
-  displayName("build stable cmake ${current.name}")
-  description("${current.name}\nconfigure ${current.build}\ntest ${current.test}")
+job("build-stable-${current.name}") {
+  displayName("build stable ${current.name}")
+  description("${current.name}\n${current.build}\n${current.test}")
   multiscm {
     git {
       branch('master')
       remote {
         name('origin')
-        url('/opt/git/jenkins.git')
+        url('/home/bucknerj/src/jenkins/scripts')
       }
       extensions {
-        relativeTargetDirectory('config')
+        relativeTargetDirectory('scripts')
       }
     }
   }
@@ -77,7 +65,7 @@ job("build-stable-cmake-${current.name}") {
     upstream('checkout-stable')
   }
   steps {
-    shell("/bin/bash -e config/scripts/cmake_build.bash ${current.build}")
+    shell("/bin/bash -e scripts/cmake_build.bash ${current.build}")
   }
   publishers {
     mailer('bucknerj@umich.edu', true, true)
@@ -85,26 +73,26 @@ job("build-stable-cmake-${current.name}") {
 } // end stable CMake build job
 
 // begin stable CMake test job
-job("test-stable-cmake-${current.name}") {
-  displayName("test stable cmake ${current.name}")
-  description("${current.name}\nconfigure ${current.build}\ntest ${current.test}")
+job("test-stable-${current.name}") {
+  displayName("test stable ${current.name}")
+  description("${current.name}\n${current.build}\n${current.test}")
   multiscm {
     git {
       branch('master')
       remote {
         name('origin')
-        url('/opt/git/jenkins.git')
+        url('/home/bucknerj/src/jenkins/scripts')
       }
       extensions {
-        relativeTargetDirectory('config')
+        relativeTargetDirectory('scripts')
       }
     }
   }
   triggers {
-    upstream("build-stable-cmake-${current.name}")
+    upstream("build-stable-${current.name}")
   }
   steps {
-    shell("/bin/bash config/scripts/test.bash ${current.test}")
+    shell("/bin/bash scripts/test.bash ${current.test}")
   }
   publishers {
     archiveXUnit {
