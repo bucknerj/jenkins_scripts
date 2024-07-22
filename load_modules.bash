@@ -32,7 +32,7 @@ if [[ "$1" == "intel" ]]; then
     echo "preparing for Intel build"
     source /opt/intel/oneapi/setvars.sh
     export CC=$(which icx)
-    export CXX=$(which icx)
+    export CXX=$(which icpx)
     export FC=$(which ifx)
 elif [[ "$1" == "gcc" ]]; then
     echo "preparing for GCC build"
