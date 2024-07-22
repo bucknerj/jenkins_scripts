@@ -61,11 +61,8 @@ ln -sf "$WORKSPACE/output.xfail" output.xfail
 
 ln -sf '/home/bucknerj/src/jenkins/sccdftb_data/sccdftb.dat' sccdftb.dat
 
-if [[ $this_job_name == *"intel"* ]]; then
-	sed '/limit filesize/d' ./test.com > test2.com
-else
-	cp ./test.com ./test2.com
-fi
+sed '/limit filesize/d' ./test.com > test2.com
+cp ./test.com ./test2.com
 /usr/bin/tcsh ./test2.com $charmm_test_vars output || true
 popd || exit
 
