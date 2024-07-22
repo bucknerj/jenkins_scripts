@@ -23,7 +23,7 @@ def cmakeBuilds =
   , [name: 'openmm', build: '--with-fftdock', test: 'cmake']
   , [name: 'domdec_gpu', build: '-u --with-gcc --with-fftdock', test: 'M 2 X 2 cmake']
   , [name: 'blade', build: '-u --with-blade --with-gcc', test: 'cmake']
-  , [name:'intel', build:'--without-quantum', test:'M 2 X 2 cmake']
+  , [name:'intel', build:'--without-quantum', test:'M 2 cmake']
   , [name:'sccdftb' , build:'--with-sccdftb' , test:'cmake']
   , [name:'repdstr' , build:'--with-repdstr' , test:'M 2 X 2 cmake']
   , [name:'stringm', build:'--with-stringm', test:'M 8 X 2 cmake']

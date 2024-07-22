@@ -31,6 +31,7 @@ echo "configure environment for build type |$1|"
 if [[ "$1" == "intel" ]]; then
     echo "preparing for Intel build"
     source /opt/intel/oneapi/setvars.sh
+    export OMP_NUM_THREADS=2
     export CC=$(which icx)
     export CXX=$(which icpx)
     export FC=$(which ifx)
