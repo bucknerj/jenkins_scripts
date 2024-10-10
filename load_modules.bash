@@ -38,7 +38,7 @@ if [[ "$1" == "intel" ]]; then
 elif [[ "$1" == "gcc" ]]; then
     echo "preparing for GCC build"
     conda activate dev
-    export PATH=$PATH:/usr/local/cuda/bin  # let cmake find nvcc
+    export CUDACXX=/usr/local/cuda/bin/nvcc
 else
     echo "ERROR: unknown build; doing nothing"
     exit 1
