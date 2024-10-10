@@ -50,8 +50,8 @@ echo "switching to the new build dir"
 pushd bld || exit
 
 echo "start configure script..."
-"$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja \
-                   -D CUDA_HOST_COMPILER=/usr/bin/g++
+"$upstream_dir"/configure -p ../inst $charmm_build_vars --with-ninja
+
 echo "... configure script finished"
 
 echo "begin compile using ninja..."
