@@ -36,6 +36,7 @@ if [[ "$1" == "intel" ]]; then
 elif [[ "$1" == "gcc" ]]; then
     echo "preparing for GCC build"
     micromamba activate testing
+    export CUDAHOSTCXX=/usr/bin/g++
 else
     echo "ERROR: unknown build; doing nothing"
     exit 1
