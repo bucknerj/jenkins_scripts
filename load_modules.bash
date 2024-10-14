@@ -11,20 +11,18 @@
 
 # export FFTW_HOME=/usr
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/bucknerj/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'micromamba shell init' !!
+export MAMBA_EXE='/home/bucknerj/.local/bin/micromamba';
+export MAMBA_ROOT_PREFIX='/home/bucknerj/micromamba';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
 if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
+    eval "$__mamba_setup"
 else
-    if [ -f "/home/bucknerj/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/bucknerj/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/bucknerj/anaconda3/bin:$PATH"
-    fi
+    alias micromamba="$MAMBA_EXE"  # Fallback on help from micromamba activate
 fi
-unset __conda_setup
-# <<< conda initialize <<<
+unset __mamba_setup
+# <<< mamba initialize <<<
 
 echo "configure environment for build type |$1|"
 
