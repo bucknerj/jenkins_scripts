@@ -37,8 +37,7 @@ if [[ "$1" == "intel" ]]; then
     export FC=$(which ifx)
 elif [[ "$1" == "gcc" ]]; then
     echo "preparing for GCC build"
-    conda activate dev
-    export CUDACXX=/usr/local/cuda/bin/nvcc
+    micromamba activate testing
 else
     echo "ERROR: unknown build; doing nothing"
     exit 1
