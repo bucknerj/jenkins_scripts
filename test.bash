@@ -57,12 +57,23 @@ if [ ! -f output.xfail ]; then
 fi
 
 pushd inst/test || exit
+
+if [[ -e old ]]; then
+    rm -rf old
+fi
+
+if [[ -f "$WORKSPACE/old.tgz" ]]; then
+    tar xzf "$WORKSPACE/old.tgz"
+    cp -r results old
+    rm -rf results
+fi
+
 ln -sf "$WORKSPACE/output.xfail" output.xfail
 
 ln -sf '/home/bucknerj/src/jenkins/sccdftb_data/sccdftb.dat' sccdftb.dat
 
 sed '/limit filesize/d' ./test.com > test2.com
-/usr/bin/tcsh ./test2.com $charmm_test_vars output || true
+/usr/bin/tcsh ./test2.com $charmm_test_vars output old/output || true
 popd || exit
 
 mkdir -p results/output
