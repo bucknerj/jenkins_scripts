@@ -73,10 +73,17 @@ ln -sf "$WORKSPACE/output.xfail" output.xfail
 ln -sf '/home/bucknerj/src/jenkins/sccdftb_data/sccdftb.dat' sccdftb.dat
 
 sed '/limit filesize/d' ./test.com > test2.com
-/usr/bin/tcsh ./test2.com $charmm_test_vars output old/output || true
+/usr/bin/tcsh ./test2.com $charmm_test_vars output old/output | tee test.log || true
+CMPDIR=old/output/ ../tool/Compare out put &> compare.log
 popd || exit
 
 mkdir -p results/output
+
+cp inst/test/test.log results
+rm inst/test/test.log
+
+cp inst/test/compare.log results
+rm inst/test/compare.log
 
 cp inst/test/output.* results
 rm inst/test/output.*
