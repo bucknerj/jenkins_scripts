@@ -1,4 +1,4 @@
-charmmConfigs = [
+def charmmConfigs = [
     'lite': '--lite',
     'openmm': '--with-fftdock',
     'domdec_gpu': '-u --with-fftdock',
@@ -15,7 +15,7 @@ charmmConfigs = [
     'ljpme': '--with-ljpme'
 ]
 
-charmmTests = [
+def charmmTests = [
     'openmm': 'cmake',
     'domdec_gpu': 'M 2 X 2 cmake',
     'blade': 'cmake',
@@ -39,122 +39,152 @@ pipeline {
 		git branch: 'stable-release', url: 'gitlab:/bucknerj/dev-release'
 	    }
 	}
-	parallel {
-	    charmmConfigs.each { name, configArgs ->
-		stage("Configure ${name}") {
-		    steps {
-			echo "Configuring ${name}..."
-			sh """
-                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                          micromamba activate dev
-                          if [[ ! -d install-${name} ]]; then
-                            tool/NewCharmmTree install-${name}
-                          fi
-                          pushd install-${name}
-                          rm -rf build/cmake
-                          ./configure --with-ninja ${configArgs}
-                          popd
-                        """
-			echo "...finished configuring ${name}"
+	stage("Configure") {
+	    steps {
+		script {
+		    def parallelJobs[:]
+		    charmmConfigs.each { name, configArgs ->
+			parallelJobs["Configure ${name}"] = {
+			    stage("Configure ${name}") {
+    			        echo "Configuring ${name}..."
+    			        sh """
+                                  eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                                  micromamba activate dev
+                                  if [[ ! -d install-${name} ]]; then
+                                    tool/NewCharmmTree install-${name}
+                                  fi
+                                  pushd install-${name}
+                                  rm -rf build/cmake
+                                  ./configure --with-ninja ${configArgs}
+                                  popd
+                                """
+    				echo "...finished configuring ${name}"
+			    }
+			}
 		    }
+		    parallel parallelJobs
 		}
 	    }
 	}
-	parallel {
-	    charmmConfigs.each { name, configArgs ->
-		stage("Build ${name}") {
-		    steps {
-		        echo "Building ${name}..."
-			sh """
-                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                          micromamba activate dev
-                          pushd install-${name}
-                          ninja -C build/cmake install
-                          popd
-                        """
-			echo "...finished building ${name}"
+	stage("Build") {
+	    steps {
+		script {
+		    def parallelJobs[:]
+		    charmmConfigs.each { name, configArgs ->
+			parallelJobs["Build ${name}"] = {
+			    stage("Build ${name}") {
+				echo "Building ${name}..."
+			        sh """
+                                  eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                                  micromamba activate dev
+                                  pushd install-${name}
+                                  ninja -C build/cmake install
+                                  popd
+                                """
+				echo "...finished building ${name}"
+			    }
+			}
 		    }
+		    parallel parallelJobs
 		}
 	    }
 	}
-	parallel {
-	    charmmTests.each { name, testArgs ->
-		stage("Test ${name}") {
-		    steps {
-			echo "Testing ${name}..."
-			sh """
-                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                          micromamba activate dev
-                          pushd install-${name}/test
-                          if [[ -d output ]]; then
-                            rm -rf old
-                            mkdir old
-                            cp -r output* old/
-                            rm -rf output*
-                          fi
-                          if [[ -d old ]]; then
-                            if [[ -f test.log ]]; then
-                              cp test.log old/
-                              rm test.log
-                            fi
-                            if [[ -f compare.log ]]; then
-                              cp compare.log old/
-                              rm compare.log
-                            fi
-                            if [[ -f diff.log ]]; then
-                              cp diff.log old/
-                              rm diff.log
-                            fi
-                            if [[ -f test_results.xml ]]; then
-                              cp test_results.xml old/
-                              rm test_results.xml
-                            fi
-                          fi
-                          ./test.com ${testArgs} output old/output &> test.log
-                          popd
-                        """
-        		echo "...finished testing ${name}"
-        	    }
-        	}
+	stage("Test") {
+	    steps {
+		script {
+		    def parallelJobs[:]
+		    charmmTests.each { name, testArgs ->
+			parallelJobs["Test ${name}"] = {
+			    stage("Test ${name}") {
+				echo "Testing ${name}..."
+				sh """
+                                  eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                                  micromamba activate dev
+                                  pushd install-${name}/test
+                                  if [[ -d output ]]; then
+                                    rm -rf old
+                                    mkdir old
+                                    cp -r output* old/
+                                    rm -rf output*
+                                  fi
+                                  if [[ -d old ]]; then
+                                    if [[ -f test.log ]]; then
+                                      cp test.log old/
+                                      rm test.log
+                                    fi
+                                    if [[ -f compare.log ]]; then
+                                      cp compare.log old/
+                                      rm compare.log
+                                    fi
+                                    if [[ -f diff.log ]]; then
+                                      cp diff.log old/
+                                      rm diff.log
+                                    fi
+                                    if [[ -f test_results.xml ]]; then
+                                      cp test_results.xml old/
+                                      rm test_results.xml
+                                    fi
+                                  fi
+                                  ./test.com ${testArgs} output old/output &> test.log
+                                  popd
+                                """
+                		echo "...finished testing ${name}"
+        		    }
+        		}
+		    }
+		    parallel parallelJobs
+		}
 	    }
 	}
-	parallel {
-	    charmmTests.each { name, testArgs ->
-		stage("Compare ${name}") {
-		    steps {
-			echo "Comparing ${name}..."
-			sh """
-                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                          micromamba activate dev
-                          pushd install-${name}/test
-                          export CMPDIR=old/output
-                          CMPDIR=old/output ../tool/Compare out put &> compare.log
-                          CMPDIR=old/output ../tool/Compare out put v &> diff.log
-                          popd
-                        """
-        		echo "...finished comparing ${name}"
-        	    }
-        	}
+	stage("Compare") {
+	    steps {
+		script {
+		    def parallelJobs[:]
+		    charmmTests.each { name, testArgs ->
+			parallelJobs["Compare ${name}"] = {
+			    stage("Compare ${name}") {
+				echo "Comparing ${name}..."
+        			sh """
+                                  eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                                  micromamba activate dev
+                                  pushd install-${name}/test
+                                  export CMPDIR=old/output
+                                  CMPDIR=old/output ../tool/Compare out put &> compare.log
+                                  CMPDIR=old/output ../tool/Compare out put v &> diff.log
+                                  popd
+                                """
+                		echo "...finished comparing ${name}"
+                	    }
+                	}
+		    }
+		    parallel parallelJobs
+		}
 	    }
 	}
-	parallel {
-	    charmmTests.each { name, testArgs ->
-                stage("Grade ${name}") {
-        	    steps {
-        		echo "Grading ${name}..."
-        		sh """
-                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                          micromamba activate dev
-                          pushd install-${name}/test
-                          # call python script here
-                          python ../config/new-test-grader.py &> test_results.xml
-                          popd
-                        """
-        		junit "install-${name}/test/test_results.xml"
-        		echo "...finished grading ${name}"
-        	    }
-        	}
-            }
+	stage("Grade") {
+	    steps {
+		script {
+		    def parallelJobs[:]
+		    charmmTests.each { name, testArgs ->
+			parallelJobs["Grade ${name}"] = {
+			    stage("Grade ${name}") {
+        			echo "Grading ${name}..."
+        			sh """
+                                  eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                                  micromamba activate dev
+                                  pushd install-${name}/test
+                                  # call python script here
+                                  python ../config/new-test-grader.py &> test_results.xml
+                                  popd
+                                """
+                		junit "install-${name}/test/test_results.xml"
+                		echo "...finished grading ${name}"
+                	    }
+        		}
+		    }
+		    parallel parallelJobs
+		}
+	    }
 	}
     }
 }
