@@ -42,7 +42,7 @@ pipeline {
 	stage("Configure") {
 	    steps {
 		script {
-		    def parallelJobs[:]
+                    def parallelJobs = [:]
 		    charmmConfigs.each { name, configArgs ->
 			parallelJobs["Configure ${name}"] = {
 			    stage("Configure ${name}") {
@@ -69,7 +69,7 @@ pipeline {
 	stage("Build") {
 	    steps {
 		script {
-		    def parallelJobs[:]
+                    def parallelJobs = [:]
 		    charmmConfigs.each { name, configArgs ->
 			parallelJobs["Build ${name}"] = {
 			    stage("Build ${name}") {
@@ -92,7 +92,7 @@ pipeline {
 	stage("Test") {
 	    steps {
 		script {
-		    def parallelJobs[:]
+                    def parallelJobs = [:]
 		    charmmTests.each { name, testArgs ->
 			parallelJobs["Test ${name}"] = {
 			    stage("Test ${name}") {
@@ -139,7 +139,7 @@ pipeline {
 	stage("Compare") {
 	    steps {
 		script {
-		    def parallelJobs[:]
+                    def parallelJobs = [:]
 		    charmmTests.each { name, testArgs ->
 			parallelJobs["Compare ${name}"] = {
 			    stage("Compare ${name}") {
@@ -164,7 +164,7 @@ pipeline {
 	stage("Grade") {
 	    steps {
 		script {
-		    def parallelJobs[:]
+		    def parallelJobs = [:]
 		    charmmTests.each { name, testArgs ->
 			parallelJobs["Grade ${name}"] = {
 			    stage("Grade ${name}") {
