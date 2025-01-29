@@ -45,7 +45,7 @@ pipeline {
 		    steps {
 			echo "Configuring ${name}..."
 			sh """
-                          eval "$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                           micromamba activate dev
                           if [[ ! -d install-${name} ]]; then
                             tool/NewCharmmTree install-${name}
@@ -66,7 +66,7 @@ pipeline {
 		    steps {
 		        echo "Building ${name}..."
 			sh """
-                          eval "$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                           micromamba activate dev
                           pushd install-${name}
                           ninja -C build/cmake install
@@ -83,7 +83,7 @@ pipeline {
 		    steps {
 			echo "Testing ${name}..."
 			sh """
-                          eval "$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                           micromamba activate dev
                           pushd install-${name}/test
                           if [[ -d output ]]; then
@@ -124,7 +124,7 @@ pipeline {
 		    steps {
 			echo "Comparing ${name}..."
 			sh """
-                          eval "$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                           micromamba activate dev
                           pushd install-${name}/test
                           export CMPDIR=old/output
@@ -143,7 +143,7 @@ pipeline {
         	    steps {
         		echo "Grading ${name}..."
         		sh """
-                          eval "$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
+                          eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                           micromamba activate dev
                           pushd install-${name}/test
                           # call python script here
