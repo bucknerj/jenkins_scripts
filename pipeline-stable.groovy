@@ -78,7 +78,7 @@ pipeline {
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                                   micromamba activate dev
                                   pushd install-${name}
-                                  ninja -C build/cmake install
+                                  ninja -j 2 -C build/cmake install
                                   popd
                                 """
 				echo "...finished building ${name}"
