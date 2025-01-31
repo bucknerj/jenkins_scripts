@@ -35,8 +35,7 @@ if [[ "$1" == "intel" ]]; then
     export FC=$(which ifx)
 elif [[ "$1" == "gcc" ]]; then
     echo "preparing for GCC build"
-    micromamba activate testing
-    export CUDAHOSTCXX=/usr/bin/g++
+    micromamba activate workshop
 else
     echo "ERROR: unknown build; doing nothing"
     exit 1

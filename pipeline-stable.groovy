@@ -49,7 +49,7 @@ pipeline {
     			        echo "Configuring ${name}..."
     			        sh """
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                                  micromamba activate dev
+                                  micromamba activate workshop
                                   if [[ ! -d install-${name} ]]; then
                                     tool/NewCharmmTree install-${name}
                                   fi
@@ -76,7 +76,7 @@ pipeline {
 				echo "Building ${name}..."
 			        sh """
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                                  micromamba activate dev
+                                  micromamba activate workshop
                                   pushd install-${name}
                                   ninja -j 2 -C build/cmake install
                                   popd
@@ -99,7 +99,7 @@ pipeline {
 				echo "Testing ${name}..."
 				sh """
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                                  micromamba activate dev
+                                  micromamba activate workshop
                                   pushd install-${name}/test
                                   if [[ -d output ]]; then
                                     rm -rf old
@@ -146,7 +146,7 @@ pipeline {
 				echo "Comparing ${name}..."
         			sh """
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                                  micromamba activate dev
+                                  micromamba activate workshop
                                   pushd install-${name}/test
                                   export CMPDIR=old/output
                                   CMPDIR=old/output ../tool/Compare out put &> compare.log
@@ -171,7 +171,7 @@ pipeline {
         			echo "Grading ${name}..."
         			sh """
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
-                                  micromamba activate dev
+                                  micromamba activate workshop
                                   pushd install-${name}/test
                                   # call python script here
                                   python ../config/new-test-grader.py &> test_results.xml
