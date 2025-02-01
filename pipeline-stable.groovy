@@ -174,10 +174,10 @@ pipeline {
                                   micromamba activate workshop
                                   pushd install-${name}/test
                                   # call python script here
-                                  python ../config/new-test-grader.py &> test_results.xml
+                                  python ../../config/new-test-grader.py &> ${name}.xml
                                   popd
                                 """
-                		junit "install-${name}/test/test_results.xml"
+                		junit "install-${name}/test/${name}.xml"
                 		echo "...finished grading ${name}"
                 	    }
         		}
