@@ -50,6 +50,7 @@ pipeline {
     			        sh """
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                                   micromamba activate workshop
+                                  export FFTW_HOME=$CONDA_PREFIX
                                   if [[ ! -d install-${name} ]]; then
                                     tool/NewCharmmTree install-${name}
                                   fi
