@@ -1,18 +1,18 @@
 def charmmConfigs = [
-    'lite': '--lite',
-    'openmm': '--with-fftdock',
-    'domdec_gpu': '-u --with-fftdock',
-    'blade': '-u --with-blade',
-    'sccdftb': '--with-sccdftb',
-    'repdstr': '--with-repdstr',
-    'stringm': '--with-stringm',
-    'misc': '-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS',
-    'misc2': '--without-domdec --with-g09 -a DISTENE,MTS',
-    'tamd': '--without-mpi -a TAMD',
-    'mndo97': '--with-mndo97',
-    'gamus': '--with-gamus' ,
-    'squantm': '--with-squantm',
-    'ljpme': '--with-ljpme'
+    'lite': '--without-python --lite',
+    'openmm': '--without-python --with-fftdock',
+    'domdec_gpu': '--without-python -u --with-fftdock',
+    'blade': '-u --with-blade --with-fftdock',
+    'sccdftb': '--without-python --with-sccdftb',
+    'repdstr': '--without-python --with-repdstr',
+    'stringm': '--without-python --with-stringm',
+    'misc': '--without-python -a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS',
+    'misc2': '--without-python --without-domdec --with-g09 -a DISTENE,MTS',
+    'tamd': '--without-python --without-mpi -a TAMD',
+    'mndo97': '--without-python --with-mndo97',
+    'gamus': '--without-python --with-gamus' ,
+    'squantm': '--without-python --with-squantm',
+    'ljpme': '--without-python --with-ljpme'
 ]
 
 def charmmTests = [
@@ -50,6 +50,7 @@ pipeline {
     			        sh """
                                   eval "\$(/home/bucknerj/.local/bin/micromamba shell hook --shell zsh)"
                                   micromamba activate workshop
+                                  export FFTW_HOME=${'$'}CONDA_PREFIX
                                   if [[ ! -d install-${name} ]]; then
                                     tool/NewCharmmTree install-${name}
                                   fi
