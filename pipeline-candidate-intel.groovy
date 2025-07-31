@@ -1,18 +1,18 @@
 def charmmConfigs = [
-    'lite': '--without-python --with-intel --lite',
-    'domdec_gpu': '--without-python -u --with-intel -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++',
-    'blade': '-u --with-blade --with-intel -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++',
-    'sccdftb': '--without-python --with-sccdftb --with-intel',
-    'repdstr': '--without-python --with-repdstr --with-intel',
-    'stringm': '--without-python --with-stringm --with-intel',
-    'misc': '--without-python -a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS --with-intel',
-    'misc2': '--without-python --without-domdec --with-g09 -a DISTENE,MTS --with-intel',
-    'tamd': '--without-python --without-mpi -a TAMD --with-intel',
-    'mndo97': '--without-python --with-mndo97 --with-intel',
-    'gamus': '--without-python --with-gamus --with-intel',
-    'squantm': '--without-python --with-squantm --with-intel',
-    'ljpme': '--without-python --with-ljpme --with-intel',
-    'resize': '--without-python -a RESIZE --with-intel'
+    'lite': '--without-python --lite',
+    'domdec_gpu': '--without-python -u -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++',
+    'blade': '-u --with-blade -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++',
+    'sccdftb': '--without-python --with-sccdftb',
+    'repdstr': '--without-python --with-repdstr',
+    'stringm': '--without-python --with-stringm',
+    'misc': '--without-python -a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS',
+    'misc2': '--without-python --without-domdec --with-g09 -a DISTENE,MTS',
+    'tamd': '--without-python --without-mpi -a TAMD',
+    'mndo97': '--without-python --with-mndo97',
+    'gamus': '--without-python --with-gamus',
+    'squantm': '--without-python --with-squantm',
+    'ljpme': '--without-python --with-ljpme',
+    'resize': '--without-python -a RESIZE'
 ]
 
 def charmmTests = [
@@ -50,6 +50,10 @@ pipeline {
     			        sh """
                                   module use /home/bucknerj/modulefiles
                                   module load compiler/latest mkl/latest mpi/latest
+                                  export CC=$(which icx)
+                                  export CXX=$(which icx)
+                                  export FC=$(which ifx)
+
                                   if [[ ! -d install-${name} ]]; then
                                     tool/NewCharmmTree install-${name}
                                   fi
