@@ -50,9 +50,9 @@ pipeline {
     			        sh """
                                   module use /home/bucknerj/modulefiles
                                   module load compiler/latest mkl/latest mpi/latest
-                                  export CC=$(which icx)
-                                  export CXX=$(which icx)
-                                  export FC=$(which ifx)
+                                  export CC=\$(which icx)
+                                  export CXX=\$(which icx)
+                                  export FC=\$(which ifx)
 
                                   if [[ ! -d install-${name} ]]; then
                                     tool/NewCharmmTree install-${name}
