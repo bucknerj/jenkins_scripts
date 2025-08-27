@@ -6,8 +6,11 @@ new_dir=$3
 
 read -rd '' seddir << EOF
 /SET OMP_NUM_THREADS=2/d
-/astx/d
+/CUDA device/d
+/alloc/d
+/atsx/d
 /shmem: mmap:/d
+/create_and_attach/d
 /Revision unknown/d
 /Git commit/d
 /CMA: no RDMA devices found/d
@@ -127,15 +130,28 @@ for out_file in $(ls $new_dir/*.out); do
 	compare=0
     fi
 
-    grep -i "Test NOT performed" $out_file | grep -v "!" &> /dev/null
+    grep -i "TESTCASE RESULT: SKIP|test not performed" $out_file | grep -v "!" &> /dev/null
     status=$?
     if [ $status -eq 0 ]; then
 	echo "***** SKIPPED *****"
 	compare=0
     fi
 
+    grep -i "TESTCASE RESULT: FAIL" $out_file &> /dev/null
+    status=$?
+    if [ $status -eq 0 ]; then
+	echo "***** FAILED *****"
+	compare=0
+    fi
+
     if [ ! -f "$old_dir/$test_name.out" ]; then
 	echo "***** NEW *****"
+	compare=0
+    fi
+
+    grep -i "TESTCASE RESULT: PASS" $out_file &> /dev/null
+    status=$?
+    if [ $status -eq 0 ]; then
 	compare=0
     fi
 
