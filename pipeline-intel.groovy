@@ -9,21 +9,24 @@ def GPU_TESTS = ['domdec_gpu', 'blade'] as Set
 // Path to jenkins helper scripts on the build agent
 def SCRIPTS_DIR = '/home/bucknerj/src/jenkins_scripts'
 
+def PIP_LOCK = '-D pip_lock=ON'
+
 def charmmConfigs = [
-    'lite': '--without-python --with-intel --lite',  // build-only, verifies compilation
-    'domdec_gpu': '--without-python -u --with-intel -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++',
-    'blade': '-u --with-blade --with-intel -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++',
-    'sccdftb': '--without-python --with-sccdftb --with-intel',
-    'repdstr': '--without-python --with-repdstr --with-intel',
-    'stringm': '--without-python --with-stringm --with-intel',
-    'misc': '--without-python -a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS --with-intel',
-    'misc2': '--without-python --without-domdec --with-g09 -a DISTENE,MTS --with-intel',
-    'tamd': '--without-python --without-mpi -a TAMD --with-intel',
-    'mndo97': '--without-python --with-mndo97 --with-intel',
-    'gamus': '--without-python --with-gamus --with-intel',
-    'squantm': '--without-python --with-squantm --with-intel',
-    'ljpme': '--without-python --with-ljpme --with-intel',
-    'resize': '--without-python -a RESIZE --with-intel'
+    'lite': "--with-intel --lite ${PIP_LOCK}",  // build-only, verifies compilation
+    'domdec_gpu': "-u --with-intel -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++ ${PIP_LOCK}",
+    'blade': "-u --with-blade --with-intel -D CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -D CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++ ${PIP_LOCK}",
+    'pycharmm': "--with-intel ${PIP_LOCK}",  // pyCHARMM pytest
+    'sccdftb': "--with-sccdftb --with-intel ${PIP_LOCK}",
+    'repdstr': "--with-repdstr --with-intel ${PIP_LOCK}",
+    'stringm': "--with-stringm --with-intel ${PIP_LOCK}",
+    'misc': "-a ABPO,ADUMBRXNCOR,ROLLRXNCOR,CORSOL,CVELOCI,PINS,ENSEMBLE,SAMC,MCMA,GSBP,PIPF,POLAR,PNM,RISM,CONSPH,RUSH,TMD,DIMS,MSCALE,EDS --with-intel ${PIP_LOCK}",
+    'misc2': "--without-domdec --with-g09 -a DISTENE,MTS --with-intel ${PIP_LOCK}",
+    'tamd': "--without-mpi -a TAMD --with-intel ${PIP_LOCK}",
+    'mndo97': "--with-mndo97 --with-intel ${PIP_LOCK}",
+    'gamus': "--with-gamus --with-intel ${PIP_LOCK}",
+    'squantm': "--with-squantm --with-intel ${PIP_LOCK}",
+    'ljpme': "--with-ljpme --with-intel ${PIP_LOCK}",
+    'resize': "-a RESIZE --with-intel ${PIP_LOCK}"
 ]
 
 def charmmTests = [
@@ -182,6 +185,23 @@ pipeline {
                 }
             }
         }
+        stage("Pytest pyCHARMM") {
+            steps {
+                script {
+                    echo "Running pyCHARMM pytest suite..."
+                    sh """
+                        ${PYTHON_SETUP}
+                        pushd install-pycharmm
+                        export CHARMM_DATA_DIR=\$(pwd)/toppar
+                        cd tool/pycharmm
+                        nice -n 10 pytest -v --tb=short --junitxml=pytest-results.xml tests/ 2>&1 | tee pytest.log
+                        popd
+                    """
+                    junit 'install-pycharmm/tool/pycharmm/pytest-results.xml'
+                    echo "...finished pyCHARMM pytest"
+                }
+            }
+        }
         stage("Report") {
             steps {
                 script {
@@ -208,7 +228,7 @@ pipeline {
     }
     post {
         always {
-            archiveArtifacts artifacts: 'install-*/test/*.log,install-*/test/*.xml',
+            archiveArtifacts artifacts: 'install-*/test/*.log,install-*/test/*.xml,install-pycharmm/tool/pycharmm/pytest*',
                              allowEmptyArchive: true
         }
         failure {
