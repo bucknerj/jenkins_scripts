@@ -51,7 +51,7 @@ job("build-stable-${current.name}") {
   description("${current.name}\n${current.build}\n${current.test}")
   multiscm {
     git {
-      branch('master')
+      branch('main')
       remote {
         name('origin')
         url('/home/bucknerj/src/jenkins/scripts')
@@ -78,7 +78,7 @@ job("test-stable-${current.name}") {
   description("${current.name}\n${current.build}\n${current.test}")
   multiscm {
     git {
-      branch('master')
+      branch('main')
       remote {
         name('origin')
         url('/home/bucknerj/src/jenkins/scripts')
