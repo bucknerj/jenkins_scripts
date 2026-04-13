@@ -187,9 +187,7 @@ pipeline {
                                 sh """
                                     ${ENV_SETUP}
                                     pushd install-${name}/test
-                                    CMPDIR=old/output ../tool/Compare out put &> compare.log
-                                    CMPDIR=old/output ../tool/Compare out put v &> diff.log
-                                    python ${SCRIPTS_DIR}/new-test-grader.py > ${name}.xml
+                                    python ${SCRIPTS_DIR}/grade-tests.py --tol 0.0001 > ${name}.xml
                                     popd
                                 """
                                 junit "install-${name}/test/${name}.xml"
