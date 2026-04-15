@@ -6,9 +6,6 @@ def MAX_TEST_CONCURRENT = 3    // concurrent test runs
 // GPU tests run sequentially to avoid GPU memory contention
 def GPU_TESTS = ['domdec_gpu', 'blade'] as Set
 
-// Path to jenkins helper scripts on the build agent
-def SCRIPTS_DIR = '/home/bucknerj/src/jenkins_scripts'
-
 def PIP_LOCK = '-D pip_lock=ON'
 
 def charmmConfigs = [
@@ -95,6 +92,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'master', url: 'gitlab:/bucknerj/dev-release'
+            }
+        }
+        stage('Checkout Scripts') {
+            steps {
+                dir('jenkins_scripts') {
+                    git branch: 'main',
+                        url: 'git@github-bucknerj:bucknerj/jenkins_scripts.git'
+                }
             }
         }
         stage("Configure") {
@@ -213,7 +218,7 @@ pipeline {
                                 sh """
                                     ${PYTHON_SETUP}
                                     pushd install-${name}/test
-                                    python ${SCRIPTS_DIR}/grade-tests.py --tol 0.0001 > ${name}.xml
+                                    python ${WORKSPACE}/jenkins_scripts/grade-tests.py --tol 0.0001 > ${name}.xml
                                     popd
                                 """
                                 junit "install-${name}/test/${name}.xml"
